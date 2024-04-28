@@ -1,0 +1,78 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+}
+
+.menu {
+    background-color: #005580;
+    overflow: hidden;
+}
+
+.tier {
+    display: inline-block;
+    position: relative;
+}
+
+.server-image {
+    width: 200px;
+    height: auto;
+    margin: 10px;
+    cursor: pointer;
+    transition: filter 0.3s;
+}
+
+.server-image:checked {
+    filter: brightness(0.8); /* Make the image slightly darker when selected */
+}
+
+.server-image:active {
+    transform: scale(0.95); /* Apply a slight scale-down effect when clicked */
+}
+
+
+.menu a {
+    float: left;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.menu a:hover {
+    background-color: #004466;
+}
+
+.content {
+    text-align: center;
+    margin-top: 50px;
+}
+
+h1 {
+    color: #005580;
+}
+
+button {
+    background-color: #005580;
+    color: white;
+    border: none;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #004466;
+}
+
+.description {
+    color: #666;
+    font-size: 16px;
+    margin-top: 20px;
+}

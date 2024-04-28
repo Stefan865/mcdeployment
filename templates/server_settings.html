@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Multiple Choice Form</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="content">
+        <h1>Choose Your Options</h1>
+        <form id="choicesForm">
+            <h1> What would you like the game mode to be? </h1>
+            <label><input type="checkbox" name="option" value="Option A"> Option A</label>
+            <label><input type="checkbox" name="option" value="Option B"> Option B</label>
+            <label><input type="checkbox" name="option" value="Option C"> Option C</label>
+            <label><input type="checkbox" name="option" value="Option D"> Option D</label><br>
+            <h1> What would you like the game mode to be? </h1>
+            <label><input type="checkbox" name="option" value="Option A"> Option A</label>
+            <label><input type="checkbox" name="option" value="Option B"> Option B</label>
+            <label><input type="checkbox" name="option" value="Option C"> Option C</label>
+            <label><input type="checkbox" name="option" value="Option D"> Option D</label><br>
+            <h1> What would you like the game mode to be? </h1>
+            <label><input type="checkbox" name="option" value="Option A"> Option A</label>
+            <label><input type="checkbox" name="option" value="Option B"> Option B</label>
+            <label><input type="checkbox" name="option" value="Option C"> Option C</label>
+            <label><input type="checkbox" name="option" value="Option D"> Option D</label><br>
+            <button type="button" onclick="sendData()">Send</button>
+        </form>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
