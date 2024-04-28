@@ -20,15 +20,20 @@ body {
     height: auto;
     margin: 10px;
     cursor: pointer;
-    transition: filter 0.3s;
+    transition: transform 0.3s;
+}
+
+.server-image:hover {
+    transform: scale(0.9); /* Make the image slightly smaller on hover */
 }
 
 .server-image:checked {
     filter: brightness(0.8); /* Make the image slightly darker when selected */
+    transform: scale(0.9); /* Keep the image slightly smaller when selected */
 }
 
 .server-image:active {
-    transform: scale(0.95); /* Apply a slight scale-down effect when clicked */
+    transform: scale(0.9); /* Apply a slight scale-down effect when clicked */
 }
 
 
