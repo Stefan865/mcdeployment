@@ -1,0 +1,22 @@
+CREATE TABLE Users (
+    user_id INT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE ServerConfigurations (
+    config_id INT PRIMARY KEY,
+    user_id INT,
+    machine_id INT,
+    config_details TEXT,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+
+CREATE TABLE ServerAssociations (
+    assoc_id INT PRIMARY KEY,
+    user_id INT,
+    server_id INT,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (server_id) REFERENCES ServerConfigurations(config_id)
+);
