@@ -19,16 +19,24 @@ function toggleCheckbox(img) {
 }
 
 function sendDataToServer() {
-    var form = document.getElementById("serversForm");
-    var formData = new FormData(form);
-    var servers = [];
-
-    formData.getAll("server").forEach(server => {
-        servers.push(server);
+    var selectedServers = [];
+    document.querySelectorAll('.server-image:checked').forEach(function(image) {
+        selectedServers.push(image.alt);
     });
-
-    var jsonData = JSON.stringify({ servers: servers });
-
-    // Display the collected data (you can replace this with sending the data to a server)
+    var jsonData = JSON.stringify({ selectedServers: selectedServers });
     alert("Selected Servers:\n" + jsonData);
+}
+
+let lastClickedButton = null;
+
+function toggleButton(button) {
+    if (lastClickedButton) {
+        lastClickedButton.disabled = false; // Enable the previously clicked button
+        lastClickedButton.classList.remove('grayed-out'); // Remove the 'grayed-out' class
+    }
+    
+    button.disabled = true; // Disable the newly clicked button
+    button.classList.add('grayed-out'); // Add the 'grayed-out' class
+    
+    lastClickedButton = button; // Update the last clicked button
 }

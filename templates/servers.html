@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head>
     <title>Select Servers</title>
@@ -27,6 +27,42 @@
             <label class="tier">
                 <input type="checkbox" name="server" value="Server E" hidden>
                 <img src="{{ url_for('static', filename='diamond_pickaxe.png') }}" alt="Server E" class="server-image" onclick="toggleCheckbox(this)">
+            </label>
+            <button type="button" onclick="sendDataToServer()">Send</button>
+        </form>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Servers</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="content">
+        <h1>Select Your Servers</h1>
+        <form id="serversForm">
+            <label class="tier">
+                <input type="checkbox" name="server" value="Server A" hidden>
+                <img src="{{ url_for('static', filename='wooden_pickaxe.png') }}" alt="Server A" class="server-image" onclick="toggleButton(this)">
+            </label>
+            <label class="tier">
+                <input type="checkbox" name="server" value="Server B" hidden>
+                <img src="{{ url_for('static', filename='stone_pickaxe.png') }}" alt="Server B" class="server-image" onclick="toggleButton(this)">
+            </label>
+            <label class="tier">
+                <input type="checkbox" name="server" value="Server C" hidden>
+                <img src="{{ url_for('static', filename='golden_pickaxe.png') }}" alt="Server C" class="server-image" onclick="toggleButton(this)">
+            </label>
+            <label class="tier">
+                <input type="checkbox" name="server" value="Server D" hidden>
+                <img src="{{ url_for('static', filename='iron_pickaxe.png') }}" alt="Server D" class="server-image" onclick="toggleButton(this)">
+            </label>
+            <label class="tier">
+                <input type="checkbox" name="server" value="Server E" hidden>
+                <img src="{{ url_for('static', filename='diamond_pickaxe.png') }}" alt="Server E" class="server-image" onclick="toggleButton(this)">
             </label>
             <button type="button" onclick="sendDataToServer()">Send</button>
         </form>
