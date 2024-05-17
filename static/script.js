@@ -40,3 +40,5 @@ function toggleButton(button) {
     
     lastClickedButton = button; // Update the last clicked button
 }
+
+

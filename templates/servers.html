@@ -36,37 +36,59 @@
 </html> -->
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Select Servers</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        const divs = ['.tier1', '.tier2', '.tier3', '.tier4', '.tier5']
+        function removeGlowingDivs() { // this will remove class from other div's
+            divs.forEach(item => {
+                document.querySelector(item).classList.remove('active')
+            })
+        }
+
+        function highlightDiv(className) { // this will add class
+            removeGlowingDivs();
+            document.querySelector(className).classList.add('active')
+        }
+    </script>
 </head>
+
 <body>
     <div class="content">
         <h1>Select Your Servers</h1>
         <form id="serversForm">
-            <label class="tier">
+            <div id='tier' class="tier1" onclick="highlightDiv('.tier1')">
                 <input type="checkbox" name="server" value="Server A" hidden>
-                <img src="{{ url_for('static', filename='wooden_pickaxe.png') }}" alt="Server A" class="server-image" onclick="toggleButton(this)">
-            </label>
-            <label class="tier">
+                <span id="hidden_text"> fooo </span>
+                <img src="{{ url_for('static', filename='wooden_pickaxe.png') }}" alt="Server A" class="server-image"
+                    onclick="toggleButton(this)">
+            </div>
+            <div id='tier' class="tier2" onclick="highlightDiv('.tier2')">
                 <input type="checkbox" name="server" value="Server B" hidden>
-                <img src="{{ url_for('static', filename='stone_pickaxe.png') }}" alt="Server B" class="server-image" onclick="toggleButton(this)">
-            </label>
-            <label class="tier">
+                <img src="{{ url_for('static', filename='stone_pickaxe.png') }}" alt="Server B" class="server-image"
+                    onclick="toggleButton(this)">
+            </div>
+            <div id='tier' class="tier3" onclick="highlightDiv('.tier3')">
                 <input type="checkbox" name="server" value="Server C" hidden>
-                <img src="{{ url_for('static', filename='golden_pickaxe.png') }}" alt="Server C" class="server-image" onclick="toggleButton(this)">
-            </label>
-            <label class="tier">
+                <img src="{{ url_for('static', filename='golden_pickaxe.png') }}" alt="Server C" class="server-image"
+                    onclick="toggleButton(this)">
+            </div>
+            <div id='tier' class="tier4" onclick="highlightDiv('.tier4')">
                 <input type="checkbox" name="server" value="Server D" hidden>
-                <img src="{{ url_for('static', filename='iron_pickaxe.png') }}" alt="Server D" class="server-image" onclick="toggleButton(this)">
-            </label>
-            <label class="tier">
+                <img src="{{ url_for('static', filename='iron_pickaxe.png') }}" alt="Server D" class="server-image"
+                    onclick="toggleButton(this)">
+            </div>
+            <div id='tier' class="tier5" onclick="highlightDiv('.tier5')">
                 <input type="checkbox" name="server" value="Server E" hidden>
-                <img src="{{ url_for('static', filename='diamond_pickaxe.png') }}" alt="Server E" class="server-image" onclick="toggleButton(this)">
-            </label>
+                <img src="{{ url_for('static', filename='diamond_pickaxe.png') }}" alt="Server E" class="server-image"
+                    onclick="toggleButton(this)">
+            </div>
             <button type="button" onclick="sendDataToServer()">Send</button>
         </form>
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
+
 </html>

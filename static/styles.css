@@ -10,9 +10,12 @@ body {
     overflow: hidden;
 }
 
-.tier {
-    display: inline-block;
+#serversForm {
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5rem;
 }
 
 .server-image {
@@ -23,8 +26,42 @@ body {
     transition: transform 0.3s;
 }
 
+/* .tier {
+    width: 200px;
+    height:200px;
+}
+.tier:hover {
+    border-style: solid;
+    border-color:#004466;
+} */
+
+#tier {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: center;
+    text-align: center;
+}
+
+
+#hidden_text {
+    display: hidden;
+}
+/* #hidden_text:hover {
+
+} */
+
+
+.active{
+    border: 10px solid black;
+}
+  
+
+
 .server-image:hover {
-    transform: scale(0.9); /* Make the image slightly smaller on hover */
+    transform: translateX(-1rem);
+    transform: translateY(-1rem);
+
+     /* Make the image slightly smaller on hover */
 }
 
 .server-image:checked {
@@ -67,6 +104,11 @@ body {
 }
 
 .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
     text-align: center;
     margin-top: 50px;
 }
