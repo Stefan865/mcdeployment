@@ -1,10 +1,11 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm 
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
+from valve.rcon import RCON
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -95,7 +96,7 @@ def login():
                 return redirect(url_for('dashboard'))
     return render_template('login.html', form=form)
 
-@ app.route('/register', methods=['GET', 'POST'])
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
 
@@ -107,6 +108,24 @@ def register():
         return redirect(url_for('login'))
 
     return render_template('register.html', form=form)
+
+@app.route('/', methods=['GET', 'POST'])
+def connect():
+    message = ""
+    if request.method == 'POST':
+        command = request.form['command']
+        server_address = ('35.159.107.238', 25575)
+        password = 'rconpassword123'
+        
+        try:
+            with RCON(server_address, password) as rcon:
+                response = rcon.execute(command)
+                message = response.body.decode('utf-8')
+        except Exception as e:
+            message = f"Failed to send RCON command: {str(e)}"
+
+    return render_template('index.html', message=message)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

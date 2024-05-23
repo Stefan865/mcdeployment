@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RCON Web Interface</title>
+</head>
+<body>
+    <h1>RCON Command Sender</h1>
+    <form method="post">
+        <input type="text" name="command" placeholder="Enter RCON Command" required>
+        <button type="submit">Send Command</button>
+    </form>
+    {% if message %}
+        <p>Response: {{ message }}</p>
+    {% endif %}
+</body>
+</html>

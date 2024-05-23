@@ -92,6 +92,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
     <title>Account Dashboard</title>
     <style>
         body {
@@ -143,6 +144,13 @@
     </style>
 </head>
 <body>
+    <div class="menu">
+        <a href="/home">Home</a>
+        <a href="/services">Services</a>
+        <a href="/contacts">Contacts</a>
+        <a href="/about">About</a>
+        <a href="/login">Login</a>
+    </div>
     <div class="container">
         <h1>Account Dashboard</h1>
         <div class="dashboard-item">
@@ -159,6 +167,9 @@
         </div>
         <div class="logout-link">
             <a href="/logout">Log out</a>
+        </div>
+        <div class="connect">
+            <a href="/">Connect to server</a>
         </div>
     </div>
 </body>
