@@ -2,8 +2,8 @@ function sendData() {
     // Get selected values
     var selectedOptions = {
         tier: document.getElementById("tiers").value,
-        gameMode: document.querySelector('input[name="option"]:checked').value,
-        gameModeType: document.querySelector('input[name="option1"]:checked').value
+        gamemode: document.querySelector('input[name="option"]:checked').value,
+        difficulty: document.querySelector('input[name="option1"]:checked').value
     };
 
     var jsonData = JSON.stringify(selectedOptions);
