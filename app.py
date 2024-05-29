@@ -49,6 +49,9 @@ class LoginForm(FlaskForm):
     password = PasswordField(validators=[InputRequired(), Length( min = 4, max = 80)], render_kw={"placeholder":"Password"})
     submit =SubmitField("Login")
 
+@app.route('/')
+def index():
+    return redirect(url_for('home'))
 
 @app.route('/home')
 def home():
@@ -109,7 +112,7 @@ def register():
 
     return render_template('register.html', form=form)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/connect', methods=['GET', 'POST'])
 def connect():
     message = ""
     if request.method == 'POST':
@@ -124,7 +127,7 @@ def connect():
         except Exception as e:
             message = f"Failed to send RCON command: {str(e)}"
 
-    return render_template('index.html', message=message)
+    return render_template('connect.html', message=message)
 
 
 if __name__ == '__main__':

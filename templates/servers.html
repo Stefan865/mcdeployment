@@ -1,39 +1,3 @@
-<!-- <!DOCTYPE html>
-<html>
-<head>
-    <title>Select Servers</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
-</head>
-<body>
-    <div class="content">
-        <h1>Select Your Servers</h1>
-        <form id="serversForm">
-            <label class="tier">
-                <input type="checkbox" name="server" value="Server A" hidden>
-                <img src="{{ url_for('static', filename='wooden_pickaxe.png') }}" alt="Server A" class="server-image" onclick="toggleCheckbox(this)">
-            </label>
-            <label class="tier">
-                <input type="checkbox" name="server" value="Server B" hidden>
-                <img src="{{ url_for('static', filename='stone_pickaxe.png') }}" alt="Server B" class="server-image" onclick="toggleCheckbox(this)">
-            </label>
-            <label class="tier">
-                <input type="checkbox" name="server" value="Server C" hidden>
-                <img src="{{ url_for('static', filename='golden_pickaxe.png') }}" alt="Server C" class="server-image" onclick="toggleCheckbox(this)">
-            </label>
-            <label class="tier">
-                <input type="checkbox" name="server" value="Server D" hidden>
-                <img src="{{ url_for('static', filename='iron_pickaxe.png') }}" alt="Server D" class="server-image" onclick="toggleCheckbox(this)">
-            </label>
-            <label class="tier">
-                <input type="checkbox" name="server" value="Server E" hidden>
-                <img src="{{ url_for('static', filename='diamond_pickaxe.png') }}" alt="Server E" class="server-image" onclick="toggleCheckbox(this)">
-            </label>
-            <button type="button" onclick="sendDataToServer()">Send</button>
-        </form>
-    </div>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-</body>
-</html> -->
 <!DOCTYPE html>
 <html>
 
@@ -67,33 +31,107 @@
         <h1>Select Your Servers</h1>
         <form id="serversForm">
             <div id='tier' class="tier1" onclick="highlightDiv('.tier1')">
-                <input type="checkbox" name="server" value="Server A" hidden>
-                <span id="hidden_text"> fooo </span>
-                <img src="{{ url_for('static', filename='wooden_pickaxe.png') }}" alt="Server A" class="server-image"
-                    onclick="toggleButton(this)">
+                <input type="checkbox" name="server" class="select" value="Server A">
+                <span id="hidden_text">  <ul>
+                    <li>Perfect for small groups.</li>
+                    <li><strong>CPU:</strong> 1 vCPU</li>
+                    <li><strong>RAM:</strong> 2 GB</li>
+                    <li><strong>Storage:</strong> 8 GB SSD</li>
+                    <li><strong>Player Slots:</strong> Up to 10 players</li>
+                    <li><strong>Features:</strong></li>
+                    <li>DDoS Protection</li>
+                    <li>24/7 Uptime Guarantee</li>
+                    <li>Full FTP Access</li>
+                    <li>Automatic Backups</li>
+                </ul> </span>
+                <center><img src="{{ url_for('static', filename='wooden_pickaxe.png') }}" value="Server A" class="server-image"
+                    onclick="toggleButton(this)"></center>
             </div>
             <div id='tier' class="tier2" onclick="highlightDiv('.tier2')">
-                <input type="checkbox" name="server" value="Server B" hidden>
-                <img src="{{ url_for('static', filename='stone_pickaxe.png') }}" alt="Server B" class="server-image"
-                    onclick="toggleButton(this)">
+                <input type="checkbox" name="server" class="select" value="Server B" >
+                <span id="hidden_text"> <ul>
+                    <li><strong>CPU:</strong> 2 vCPUs</li>
+                    <li><strong>RAM:</strong> 4 GB</li>
+                    <li><strong>Storage:</strong> 40 GB SSD</li>
+                    <li><strong>Player Slots:</strong> Up to 20 players</li>
+                    <li><strong>Features:</strong></li>
+                    <ul class="inline-list">
+                        <li>Everything in Tier Wood</li>
+                        <li>Free Subdomain</li>
+                        <li>Premium Support</li>
+                        <li>Advanced Mod Support</li>
+                    </ul>
+                </ul> </span>
+                <center><img src="{{ url_for('static', filename='stone_pickaxe.png') }}" alt="Server B" class="server-image"
+                    onclick="toggleButton(this)"></center>
             </div>
             <div id='tier' class="tier3" onclick="highlightDiv('.tier3')">
-                <input type="checkbox" name="server" value="Server C" hidden>
-                <img src="{{ url_for('static', filename='golden_pickaxe.png') }}" alt="Server C" class="server-image"
-                    onclick="toggleButton(this)">
+                <input type="checkbox" name="server" class="select" value="Server C" >
+                <span id="hidden_text"> 
+                    <ul>
+                        <li><strong>CPU:</strong> 3 vCPUs</li>
+                        <li><strong>RAM:</strong> 6 GB</li>
+                        <li><strong>Storage:</strong> 60 GB SSD</li>
+                        <li><strong>Player Slots:</strong> Up to 30 players</li>
+                        <li><strong>Features:</strong></li>
+                        <ul class="inline-list">
+                            <li>Everything in Tier Stone</li>
+                            <li>Enhanced Performance</li>
+                            <li>Custom JAR Support</li>
+                            <li>Scheduled Tasks</li>
+                        </ul>
+                    </ul>
+                 </span>
+                <center><img src="{{ url_for('static', filename='iron_pickaxe.png') }}" alt="Server C" class="server-image"
+                    onclick="toggleButton(this)"></center>
             </div>
             <div id='tier' class="tier4" onclick="highlightDiv('.tier4')">
-                <input type="checkbox" name="server" value="Server D" hidden>
-                <img src="{{ url_for('static', filename='iron_pickaxe.png') }}" alt="Server D" class="server-image"
-                    onclick="toggleButton(this)">
+                <input type="checkbox" name="server" class="select" value="Server D" >
+                <span id="hidden_text">
+                    <ul>
+                        <li><strong>CPU:</strong> 4 vCPUs</li>
+                        <li><strong>RAM:</strong> 8 GB</li>
+                        <li><strong>Storage:</strong> 80 GB SSD</li>
+                        <li><strong>Player Slots:</strong> Up to 50 players</li>
+                        <li><strong>Features:</strong></li>
+                        <ul class="inline-list">
+                            <li>Everything in Tier Iron</li>
+                            <li>Dedicated IP Address</li>
+                            <li>Unlimited Slots Option</li>
+                            <li>Priority Support</li>
+                        </ul>
+                    </ul>
+                </span>
+                <center><img src="{{ url_for('static', filename='golden_pickaxe.png') }}" alt="Server D" class="server-image"
+                    onclick="toggleButton(this)"></center>
             </div>
             <div id='tier' class="tier5" onclick="highlightDiv('.tier5')">
-                <input type="checkbox" name="server" value="Server E" hidden>
-                <img src="{{ url_for('static', filename='diamond_pickaxe.png') }}" alt="Server E" class="server-image"
-                    onclick="toggleButton(this)">
+                <input type="checkbox" name="server" class="select" value="Server E" >
+                <span id="hidden_text">
+                    <ul>
+                        <li><strong>CPU:</strong> 6 vCPUs</li>
+                        <li><strong>RAM:</strong> 12 GB</li>
+                        <li><strong>Storage:</strong> 120 GB SSD</li>
+                        <li><strong>Player Slots:</strong> Up to 100 players</li>
+                        <li><strong>Features:</strong></li>
+                        <ul class="inline-list">
+                            <li>Everything in Tier Gold</li>
+                            <li>Enterprise-Level Hardware</li>
+                            <li>Custom Performance Tuning</li>
+                            <li>White-Glove Setup Service</li>
+                        </ul>
+                    </ul>
+                </span>
+                <center><img src="{{ url_for('static', filename='diamond_pickaxe.png') }}" alt="Server E" class="server-image"
+                    onclick="toggleButton(this)"></center>
             </div>
-            <button type="button" onclick="sendDataToServer()">Send</button>
+            <button type="button" onclick="sendDataToServer()" class="send-button">Send</button>
         </form>
+        <script type="text/javascript">
+            $ ('.select').on('change', function() {
+                $('.select').not(this).prop('checked', false);
+            });
+        </script>
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>

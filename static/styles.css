@@ -1,13 +1,24 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 0;
     padding: 0;
-    background-color: #f2f2f2;
+    margin: 0; /* Remove default margin */
+    background-image: url("mc_background.png"); 
+    background-size: cover; /* Scale the image to cover the entire viewport */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Do not repeat the image */
+    background-attachment: fixed;
+      
 }
 
 .menu {
     background-color: #005580;
     overflow: hidden;
+}
+
+.send-button {
+    position: fixed;
+    bottom: 180px; /* Adjust as needed */
+    right: 900px;
 }
 
 #serversForm {
@@ -33,7 +44,7 @@ body {
 .tier:hover {
     border-style: solid;
     border-color:#004466;
-} */
+}  */
 
 #tier {
     display: flex;
@@ -52,7 +63,7 @@ body {
 
 
 .active{
-    border: 10px solid black;
+    border: 5px solid #005580;
 }
   
 

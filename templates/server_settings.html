@@ -15,24 +15,51 @@
     <div class="content">
         <h1>Choose Your Options</h1>
         <form id="choicesForm">
+            <label for="server">Choose a tier:</label>
+            <select name="tiers" id="tiers">
+                <option value="wood">Wooden</option>
+                <option value="stone">Stone</option>
+                <option value="iron">Iron</option>
+                <option value="gold">Gold</option>
+                <option value="diamond">Diamond</option>
+            </select>
             <h1> What would you like the game mode to be? </h1>
-            <label><input type="checkbox" name="option" value="Option A"> Option A</label>
-            <label><input type="checkbox" name="option" value="Option B"> Option B</label>
-            <label><input type="checkbox" name="option" value="Option C"> Option C</label>
-            <label><input type="checkbox" name="option" value="Option D"> Option D</label><br>
+            <label><input type="radio" name="option" class="select" value="Survival"> Survival</label>
+            <label><input type="radio" name="option" class="select" value="Creative"> Creative</label>
+            <label><input type="radio" name="option" class="select" value="Hardcore"> Hardcore</label>
+            
+            <h1> What mode would you like the game mode to be in? </h1>
+            <label><input type="radio" name="option1" class="select" value="Peaceful"> Peaceful mode</label>
+            <label><input type="radio" name="option1" class="select" value="Easy"> Easy mode</label>
+            <label><input type="radio" name="option1" class="select" value="Normal"> Normal mode</label>
+            <label><input type="radio" name="option1" class="select" value="Hard"> Hard mode</label><br>
+            
+            <h1>Advanced settings will be added later.</h1>
+            <!-- <h1> What would you like the game mode to be? </h1>
+            <label><input type="radio" name="option2" class="select" value="Option A"> Option A</label>
+            <label><input type="radio" name="option2" class="select" value="Option B"> Option B</label>
+            <label><input type="radio" name="option2" class="select" value="Option C"> Option C</label>
+            <label><input type="radio" name="option2" class="select" value="Option D"> Option D</label><br>
+             -->
+            <!-- <h1> What would you like the game mode to be? </h1>
+            <label><input type="checkbox" name="option" class="select" value="Option A"> Survival</label>
+            <label><input type="checkbox" name="option" class="select" value="Option B"> Creative</label>
+            <label><input type="checkbox" name="option" class="select" value="Option C"> Hardcore</label>
+            <h1> What mode would you like the game mode to be in? </h1>
+            <label><input type="checkbox" name="option1" class="select" value="Option A"> Peaceful mode</label>
+            <label><input type="checkbox" name="option1" class="select" value="Option B"> Easy mode</label>
+            <label><input type="checkbox" name="option1" class="select" value="Option C"> Normal mode</label>
+            <label><input type="checkbox" name="option1" class="select" value="Option D"> Hard mode</label><br>
             <h1> What would you like the game mode to be? </h1>
-            <label><input type="checkbox" name="option" value="Option A"> Option A</label>
-            <label><input type="checkbox" name="option" value="Option B"> Option B</label>
-            <label><input type="checkbox" name="option" value="Option C"> Option C</label>
-            <label><input type="checkbox" name="option" value="Option D"> Option D</label><br>
-            <h1> What would you like the game mode to be? </h1>
-            <label><input type="checkbox" name="option" value="Option A"> Option A</label>
-            <label><input type="checkbox" name="option" value="Option B"> Option B</label>
-            <label><input type="checkbox" name="option" value="Option C"> Option C</label>
-            <label><input type="checkbox" name="option" value="Option D"> Option D</label><br>
+            <label><input type="checkbox" name="option2" class="select" value="Option A"> Option A</label>
+            <label><input type="checkbox" name="option2" class="select"value="Option B"> Option B</label>
+            <label><input type="checkbox" name="option2" class="select" value="Option C"> Option C</label>
+            <label><input type="checkbox" name="option2" class="select" value="Option D"> Option D</label><br> -->
             <button type="button" onclick="sendData()">Send</button>
         </form>
     </div>
+
+    </script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
