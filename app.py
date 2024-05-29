@@ -73,6 +73,7 @@ def services():
     return render_template('services.html')
 
 @app.route('/server_settings')
+@login_required
 def server_settings():
     return render_template('server_settings.html')
 
