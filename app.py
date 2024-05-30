@@ -75,7 +75,8 @@ def services():
 @app.route('/server_settings')
 @login_required
 def server_settings():
-    return render_template('server_settings.html')
+    user_id = current_user.id
+    return render_template('server_settings.html', user_id=user_id)
 
 @app.route('/servers')
 def servers():

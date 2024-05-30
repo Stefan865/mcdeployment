@@ -1,10 +1,20 @@
 function sendData() {
     // Get selected values
-    var selectedOptions = {
-        tier: document.getElementById("tiers").value,
-        gamemode: document.querySelector('input[name="option"]:checked').value,
-        difficulty: document.querySelector('input[name="option1"]:checked').value
-    };
+        var selectedOptions = {
+            user_id: document.getElementById("user_id").value,
+            tier: document.getElementById("tiers").value,
+            level_seed: document.querySelector('input[name="option"]:nth-of-type(2)').value,
+            gamemode: document.querySelector('input[name="option0"]:checked').value,
+            motd: document.querySelector('input[name="option1"]').value,
+            pvp: document.querySelector('input[name="option4"]:checked').value,
+            generate_structures: document.querySelector('input[name="option8"]:checked').value,
+            difficulty: document.querySelector('input[name="option2"]:checked').value,
+            max_players: document.querySelector('select[name="option5"]').value,
+            online_mode: document.querySelector('input[name="option3"]:checked').value,
+            view_distance: document.querySelector('select[name="option6"]').value,
+            hardcore: document.querySelector('input[name="option7"]:checked').value
+           
+        };
 
     var jsonData = JSON.stringify(selectedOptions);
 
@@ -29,6 +39,13 @@ function sendData() {
         console.error('Error:', error);
     });
        // Send JSON data to server or do whatever you need with it
+}
+function showDropdown() {
+    document.getElementById("numberDropdown").style.display = "block";
+}
+
+function hideDropdown() {
+    document.getElementById("numberDropdown").style.display = "none";
 }
 
 
