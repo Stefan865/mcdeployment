@@ -47,6 +47,16 @@
             color: #333;
         }
 
+        .flash-message {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
         .dashboard-item {
             padding: 10px 0;
             border-bottom: 1px solid #ccc;
@@ -99,6 +109,31 @@
         .delete-btn:hover {
             background-color: #c82333;
         }
+
+        .server-control-btn {
+            margin: 5px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .start-btn {
+            background-color: #28a745;
+        }
+
+        .stop-btn {
+            background-color: #ffc107;
+        }
+
+        .delete-server-btn {
+            background-color: #dc3545;
+        }
+
+        .server-control-btn:hover {
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
@@ -110,6 +145,15 @@
         <a href="/login">Login</a>
     </div>
     <div class="container">
+        <!-- Flash messages block -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash-message">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
         <h1>Account Dashboard</h1>
         <div class="dashboard-item">
             <strong>Username:</strong> {{ current_user.username }}
@@ -136,6 +180,14 @@
                         </li>
                     {% endfor %}
                 </ul>
+                <div class="server-controls">
+                    <form method="POST" action="{{ url_for('start_server') }}">
+                        <button type="submit" class="server-control-btn start-btn">Start Server</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('stop_server') }}">
+                        <button type="submit" class="server-control-btn stop-btn">Stop Server</button>
+                    </form>
+                </div>
             {% else %}
                 <p>No machines for this user.</p>
             {% endif %}

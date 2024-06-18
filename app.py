@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
@@ -157,10 +157,29 @@ def connect():
     return render_template('connect.html', message=message)
 
 
+@app.route('/start_server', methods=['POST'])
+@login_required
+def start_server():
+    # Your logic to start the server
+    flash("Server started successfully.")
+    return redirect(url_for('dashboard'))
+
+
+@app.route('/stop_server', methods=['POST'])
+@login_required
+def stop_server():
+    # Your logic to stop the server
+    flash("Server stopped successfully.")
+    return redirect(url_for('dashboard'))
+
+
 @app.route('/create_machine', methods=['GET', 'POST'])
 @login_required
 def create_machine():
     form = MachineForm()
+    if Machine.query.filter_by(user_id=current_user.id).first():
+        flash("You have already created a machine. You can't create more than one machine.")
+        return redirect(url_for('dashboard'))
     if form.validate_on_submit():
         new_machine = Machine(name=form.name.data, user_id=current_user.id)
         db.session.add(new_machine)
