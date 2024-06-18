@@ -150,3 +150,43 @@ button:hover {
     font-size: 16px;
     margin-top: 20px;
 }
+
+.create-machine-button {
+    background-color: #005580;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.create-machine-button:hover {
+    background-color: #004466;
+}
+
+.machines-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.machines-list li {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+button.delete-btn {
+    background-color: #dc3545; /* Red color for delete button */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+button.delete-btn:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
