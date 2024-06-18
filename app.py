@@ -5,7 +5,7 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, log
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
-
+from mcrcon import MCRcon
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
@@ -148,7 +148,7 @@ def connect():
         password = 'rconpassword123'
 
         try:
-            with RCON(server_address, password) as rcon:
+            with MCRcon(server_address, password) as rcon:
                 response = rcon.execute(command)
                 message = response.body.decode('utf-8')
         except Exception as e:
