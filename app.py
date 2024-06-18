@@ -6,10 +6,11 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 from mcrcon import MCRcon
+
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = ''
 app.config['SECRET_KEY'] = 'thisisasecretkey'
 db = SQLAlchemy(app)
 
@@ -26,6 +27,7 @@ def load_user(user_id):
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
+    email = db.Column(db.String(30), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
     machines = db.relationship('Machine', backref='owner', lazy=True)
 
@@ -43,6 +45,7 @@ class MachineForm(FlaskForm):
 
 class RegisterForm(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
+    email = StringField(validators=[InputRequired(), Length(min=4, max=30)], render_kw={"placeholder": "Email"})
     password = PasswordField(validators=[InputRequired(), Length(min=4, max=80)], render_kw={"placeholder": "Password"})
     submit = SubmitField("Register")
 
@@ -53,7 +56,14 @@ class RegisterForm(FlaskForm):
         if existing_user_username:
             raise ValidationError(
                 "That username already exists. Please choose a different one.")
+        
+    def validate_email(self, email):
+        existing_user_email = User.query.filter_by(
+            email=email.data).first()
 
+        if existing_user_email:
+            raise ValidationError(
+                "That email already exists. Please login.")
 
 class LoginForm(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
@@ -201,4 +211,4 @@ def delete_machine(machine_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port = 80)
