@@ -6,11 +6,11 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 from mcrcon import MCRcon
-import psycopg2
 import random
-
+import bcrypt
 app = Flask(__name__)
-bcrypt = Bcrypt(app)
+
+bcrypt2 = Bcrypt(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost/test'
 app.config['SECRET_KEY'] = 'thisisasecretkey'
@@ -19,25 +19,34 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
-
+# login_manager.id_attribute = 'user_id'
 
 @login_manager.user_loader
 def load_user(user_id):
     return Users.query.get(int(user_id))
 
 
+def query_user_servers(user_id):
+    users = Users.query.filter_by(user_id=user_id).first()
+    server = users.server_name
+    if server:
+        return server
+    else:
+        return None
+
 class Users(db.Model, UserMixin):
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     email = db.Column(db.String(30), nullable=False, unique=True)
-    password = db.Column(db.String(80), nullable=False)
+    password = db.Column(db.String(128), nullable=False)
     server_name = db.Column(db.String(20), nullable=True)
     ip_address = db.Column(db.String(20), nullable=True)
     dns = db.Column(db.String(50), nullable=True)
+    tier = db.Column(db.String(20), nullable=True)
+    
+    def get_id(self):
+        return str(self.user_id)
 
-# class MachineForm(FlaskForm):
-#     server_name = StringField('Machine Name', validators=[InputRequired()])
-#     submit = SubmitField('Create Machine')
 
 class User_id_setup():
     @staticmethod
@@ -98,7 +107,9 @@ def home():
 @app.route('/dashboard', methods=['GET'])
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+    user_id = current_user.user_id
+    servers = query_user_servers(user_id)
+    return render_template('dashboard.html', servers = servers)
     #return render_template('dashboard.html', machines=machines, machine_count=machine_count)
 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -116,7 +127,7 @@ def services():
 @app.route('/server_settings')
 @login_required
 def server_settings():
-    user_id = current_user.id
+    user_id = current_user.user_id
     return render_template('server_settings.html', user_id=user_id)
 
 
@@ -141,7 +152,9 @@ def login():
     if form.validate_on_submit():
         user = Users.query.filter_by(username=form.username.data).first()
         if user:
-            if bcrypt.check_password_hash(user.password, form.password.data):
+            print(user.password)
+            print()
+            if bcrypt2.check_password_hash(user.password, form.password.data):
                 login_user(user)
                 return redirect(url_for('dashboard'))
     return render_template('login.html', form=form)
@@ -154,10 +167,14 @@ def register():
     user_id = user_id_setup.validate_user_id()
     if user_id:
         if form.validate_on_submit():
-            hashed_password = bcrypt.generate_password_hash(form.password.data)
+            hashed_password = (bcrypt.hashpw(form.password.data.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'))
+            print(hashed_password)
             new_user = Users(user_id=user_id, username=form.username.data, email=form.email.data, password=hashed_password)
+            print(hashed_password)
             db.session.add(new_user)
+            print(hashed_password)
             db.session.commit()
+            print(hashed_password)
             return redirect(url_for('login'))
 
     return render_template('register.html', form=form)
