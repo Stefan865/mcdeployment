@@ -8,6 +8,7 @@ from flask_bcrypt import Bcrypt
 from mcrcon import MCRcon
 import random
 import bcrypt
+
 app = Flask(__name__)
 
 bcrypt2 = Bcrypt(app)
@@ -40,7 +41,7 @@ class Users(db.Model, UserMixin):
     email = db.Column(db.String(30), nullable=False, unique=True)
     password = db.Column(db.String(128), nullable=False)
     server_name = db.Column(db.String(20), nullable=True)
-    ip_address = db.Column(db.String(20), nullable=True)
+    subdomain = db.Column(db.String(20), nullable=True)
     tier = db.Column(db.String(20), nullable=True)
     
     def get_id(self):
@@ -240,5 +241,5 @@ def stop_server():
 #         return "Machine not found or cannot be deleted"
 
 
-if __name__ == '__main__':
-    app.run(debug=True, port = 80)
+# if __name__ == '__main__':
+#     app.run(host='0.0.0.0', debug=True, port = 5000)
