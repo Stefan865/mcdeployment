@@ -20,8 +20,5 @@ jobs:
 
     - name: Build the Docker image
       run: docker build -t mchosting-cicd .
-
-    - name: Push image to Dockerhub
-      env: 
-        DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
+    - name: Push to Dockerhub
       run: docker push $DOCKER_USERNAME/mchosting-cicd:latest
