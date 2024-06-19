@@ -20,5 +20,6 @@ jobs:
 
     - name: Build the Docker image
       run: docker build -t mchosting .
+
     - name: Push image to Dockerhub
-      run: docker push dokinik/mchosting-cicd:latest
+      run: docker push $DOCKER_USERNAME/mchosting-cicd:latest
