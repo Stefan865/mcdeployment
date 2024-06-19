@@ -15,5 +15,7 @@ COPY . /app
 # Define environment variables if needed
 # ENV ENV_VAR_NAME=value
 
-# Run your application (replace with your actual command)
-# CMD ["python", "app.py"]
+EXPOSE 80
+
+# Run your application (replace with your actual cx1ommand)
+CMD ["flask", "run"]

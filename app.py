@@ -6,11 +6,13 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 from mcrcon import MCRcon
+import psycopg2
+import random
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = ''
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost/test'
 app.config['SECRET_KEY'] = 'thisisasecretkey'
 db = SQLAlchemy(app)
 
@@ -21,26 +23,35 @@ login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return Users.query.get(int(user_id))
 
 
-class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
+class Users(db.Model, UserMixin):
+    user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     email = db.Column(db.String(30), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
-    machines = db.relationship('Machine', backref='owner', lazy=True)
+    server_name = db.Column(db.String(20), nullable=True)
+    ip_address = db.Column(db.String(20), nullable=True)
+    dns = db.Column(db.String(50), nullable=True)
 
+# class MachineForm(FlaskForm):
+#     server_name = StringField('Machine Name', validators=[InputRequired()])
+#     submit = SubmitField('Create Machine')
 
-class Machine(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+class User_id_setup():
+    @staticmethod
+    def generate_user_id():
+        user_id = random.randint(100000, 999999)
+        return user_id
 
+    def validate_user_id(self):
+        while True:
+            new_user_id = self.generate_user_id()
+            existing_user = Users.query.filter_by(user_id=new_user_id).first()
 
-class MachineForm(FlaskForm):
-    name = StringField('Machine Name', validators=[InputRequired()])
-    submit = SubmitField('Create Machine')
+            if not existing_user:
+                return new_user_id
 
 
 class RegisterForm(FlaskForm):
@@ -49,8 +60,9 @@ class RegisterForm(FlaskForm):
     password = PasswordField(validators=[InputRequired(), Length(min=4, max=80)], render_kw={"placeholder": "Password"})
     submit = SubmitField("Register")
 
+
     def validate_username(self, username):
-        existing_user_username = User.query.filter_by(
+        existing_user_username = Users.query.filter_by(
             username=username.data).first()
 
         if existing_user_username:
@@ -58,12 +70,14 @@ class RegisterForm(FlaskForm):
                 "That username already exists. Please choose a different one.")
         
     def validate_email(self, email):
-        existing_user_email = User.query.filter_by(
+        existing_user_email = Users.query.filter_by(
             email=email.data).first()
 
         if existing_user_email:
             raise ValidationError(
                 "That email already exists. Please login.")
+        
+   
 
 class LoginForm(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
@@ -84,10 +98,8 @@ def home():
 @app.route('/dashboard', methods=['GET'])
 @login_required
 def dashboard():
-    machines = Machine.query.filter_by(user_id=current_user.id).all()
-    machine_count = len(machines)
-    return render_template('dashboard.html', machines=machines, machine_count=machine_count)
-
+    return render_template('dashboard.html')
+    #return render_template('dashboard.html', machines=machines, machine_count=machine_count)
 
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
@@ -127,7 +139,7 @@ def about():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = Users.query.filter_by(username=form.username.data).first()
         if user:
             if bcrypt.check_password_hash(user.password, form.password.data):
                 login_user(user)
@@ -138,13 +150,15 @@ def login():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
-
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data)
-        new_user = User(username=form.username.data, password=hashed_password)
-        db.session.add(new_user)
-        db.session.commit()
-        return redirect(url_for('login'))
+    user_id_setup = User_id_setup()
+    user_id = user_id_setup.validate_user_id()
+    if user_id:
+        if form.validate_on_submit():
+            hashed_password = bcrypt.generate_password_hash(form.password.data)
+            new_user = Users(user_id=user_id, username=form.username.data, email=form.email.data, password=hashed_password)
+            db.session.add(new_user)
+            db.session.commit()
+            return redirect(url_for('login'))
 
     return render_template('register.html', form=form)
 
@@ -183,31 +197,31 @@ def stop_server():
     return redirect(url_for('dashboard'))
 
 
-@app.route('/create_machine', methods=['GET', 'POST'])
-@login_required
-def create_machine():
-    form = MachineForm()
-    if Machine.query.filter_by(user_id=current_user.id).first():
-        flash("You have already created a machine. You can't create more than one machine.")
-        return redirect(url_for('dashboard'))
-    if form.validate_on_submit():
-        new_machine = Machine(name=form.name.data, user_id=current_user.id)
-        db.session.add(new_machine)
-        db.session.commit()
-        return redirect(url_for('dashboard'))
-    return render_template('create_machine.html', form=form)
+# @app.route('/create_machine', methods=['GET', 'POST'])
+# @login_required
+# def create_machine():
+#     form = MachineForm()
+#     if Machine.query.filter_by(user_id=current_user.id).first():
+#         flash("You have already created a machine. You can't create more than one machine.")
+#         return redirect(url_for('dashboard'))
+#     if form.validate_on_submit():
+#         new_machine = Machine(name=form.name.data, user_id=current_user.id)
+#         db.session.add(new_machine)
+#         db.session.commit()
+#         return redirect(url_for('dashboard'))
+#     return render_template('create_machine.html', form=form)
 
 
-@app.route('/delete_machine/<int:machine_id>', methods=['POST'])
-@login_required
-def delete_machine(machine_id):
-    machine = Machine.query.get(machine_id)
-    if machine:
-        db.session.delete(machine)
-        db.session.commit()
-        return redirect(url_for('dashboard'))
-    else:
-        return "Machine not found or cannot be deleted"
+# @app.route('/delete_machine/<int:machine_id>', methods=['POST'])
+# @login_required
+# def delete_machine(machine_id):
+#     machine = Machine.query.get(machine_id)
+#     if machine:
+#         db.session.delete(machine)
+#         db.session.commit()
+#         return redirect(url_for('dashboard'))
+#     else:
+#         return "Machine not found or cannot be deleted"
 
 
 if __name__ == '__main__':

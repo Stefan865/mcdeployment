@@ -1,22 +1,41 @@
-CREATE TABLE Users (
-    user_id INT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
-    password VARCHAR(100) NOT NULL
-);
-
-CREATE TABLE ServerConfigurations (
-    config_id INT PRIMARY KEY,
-    user_id INT,
-    machine_id INT,
-    config_details TEXT,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
-);
-
-
-CREATE TABLE ServerAssociations (
-    assoc_id INT PRIMARY KEY,
-    user_id INT,
-    server_id INT,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (server_id) REFERENCES ServerConfigurations(config_id)
-);
+attrs==23.1.0
+bcrypt==4.1.3
+blinker==1.7.0
+certifi==2023.11.17
+charset-normalizer==3.3.2
+click==8.1.7
+clickclick==20.10.2
+colorama==0.4.6
+connexion==2.14.2
+Flask==3.0.3
+Flask-Bcrypt==1.0.1
+Flask-Login==0.6.3
+Flask-SQLAlchemy==3.1.1
+Flask-WTF==1.2.1
+greenlet==3.0.3
+idna==3.6
+inflection==0.5.1
+iniconfig==2.0.0
+itsdangerous==2.1.2
+Jinja2==3.1.2
+jsonschema==4.20.0
+jsonschema-specifications==2023.11.2
+MarkupSafe==2.1.3
+mcrcon==0.7.0
+packaging==23.2
+pluggy==1.3.0
+psycopg2==2.9.9
+psycopg2-binary==2.9.9
+pygame==2.5.2
+pytest==7.4.4
+PyYAML==6.0.1
+rcon==2.4.6
+referencing==0.32.0
+requests==2.31.0
+rpds-py==0.13.2
+SQLAlchemy==2.0.30
+swagger-ui-bundle==0.0.9
+typing_extensions==4.12.2
+urllib3==2.1.0
+Werkzeug==3.0.3
+WTForms==3.1.2
