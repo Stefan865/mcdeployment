@@ -23,4 +23,4 @@ jobs:
     - name: Delete Old docker container
       run: docker rm -f mchosting-cicd || true
     - name: Run Docker Container
-      run: docker run -d -p 8080:8080 --name mchosting-cicd dokinik/mchosting-cicd
+      run: docker run -d -p 80:80 --name mchosting-cicd dokinik/mchosting-cicd
