@@ -41,7 +41,6 @@ class Users(db.Model, UserMixin):
     password = db.Column(db.String(128), nullable=False)
     server_name = db.Column(db.String(20), nullable=True)
     ip_address = db.Column(db.String(20), nullable=True)
-    dns = db.Column(db.String(50), nullable=True)
     tier = db.Column(db.String(20), nullable=True)
     
     def get_id(self):
