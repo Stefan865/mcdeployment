@@ -13,7 +13,9 @@ app = Flask(__name__)
 
 bcrypt2 = Bcrypt(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost/test'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://webuserdb:math1234@ec2-18-153-177-227.eu-central-1.compute.amazonaws.com:5432/mchosting'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost:5432/test'
+
 app.config['SECRET_KEY'] = 'thisisasecretkey'
 db = SQLAlchemy(app)
 
@@ -241,5 +243,5 @@ def stop_server():
 #         return "Machine not found or cannot be deleted"
 
 
-# if __name__ == '__main__':
-#     app.run(host='0.0.0.0', debug=True, port = 5000)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', debug=True, port = 5000)

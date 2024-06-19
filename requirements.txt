@@ -7,3 +7,4 @@ Flask-Bcrypt==1.0.1
 mcrcon==0.7.0
 psycopg2-binary==2.9.9
 gunicorn
+#psycopg2==2.9.9
