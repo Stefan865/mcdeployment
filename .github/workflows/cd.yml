@@ -1,0 +1,26 @@
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
+
+jobs:
+
+  build:
+
+    runs-on: self-hosted
+
+    steps:
+    - name: Log in to Dockerhub
+      env: 
+        DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
+        DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+      run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    - name: Pull Docker image
+      run: sudo docker pull dokinik/mchosting-cicd:latest
+    - name: Delete Old docker container
+      run: sudo docker rm -f mchosting-cicd || true
+    - name: Run Docker Container
+      run: sudo docker run -d -p 8080:8080 --name mchosting-cicd dokinik/mchosting-cicd
