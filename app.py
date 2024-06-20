@@ -9,12 +9,15 @@ from mcrcon import MCRcon
 import random
 import bcrypt
 
-
 app = Flask(__name__)
 
 bcrypt2 = Bcrypt(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:7073@localhost/test'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://webuserdb:math1234@ec2-18-153-177-227.eu-central-1.compute.amazonaws.com:5432/mchosting'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost:5432/test'
+
+
 app.config['SECRET_KEY'] = 'thisisasecretkey'
 db = SQLAlchemy(app)
 
@@ -42,7 +45,7 @@ class Users(db.Model, UserMixin):
     email = db.Column(db.String(30), nullable=False, unique=True)
     password = db.Column(db.String(128), nullable=False)
     server_name = db.Column(db.String(20), nullable=True)
-    ip_address = db.Column(db.String(20), nullable=True)
+    subdomain = db.Column(db.String(20), nullable=True)
     tier = db.Column(db.String(20), nullable=True)
 
     def get_id(self):
