@@ -67,7 +67,7 @@
             border-bottom: none;
         }
 
-        .logout-link, .connect, .machine-info, .create-machine {
+        .logout-link, .connect, .create-machine {
             text-align: center;
             margin-top: 20px;
         }
@@ -127,10 +127,6 @@
             background-color: #ffc107;
         }
 
-        .delete-server-btn {
-            background-color: #dc3545;
-        }
-
         .server-control-btn:hover {
             opacity: 0.8;
         }
@@ -142,7 +138,7 @@
         <a href="/services">Services</a>
         <a href="/contacts">Contacts</a>
         <a href="/about">About</a>
-        <a href="/login">Login</a>
+        <a href="/logout">Logout</a>
     </div>
     <div class="container">
         <!-- Flash messages block -->
@@ -161,17 +157,15 @@
         <div class="dashboard-item">
             <strong>Email:</strong> {{ current_user.email }}
         </div>
-        <div class="dashboard-item">
-            <strong>Server tier:</strong> 
-        </div>
         <div class="machine-info">
-            {% if servers %}
-                <p>You currently have {{ servers|length }} machine{{ '' if servers|length == 1 else 's' }}.</p>
+            {% if server_names %}
+                <p>You currently have {{ server_names|length }} server{{ 's' if server_names|length > 1 else '' }}.</p>
                 <ul class="machines-list">
-                    {% for server in servers %}
+                    {% for server_name in server_names %}
                         <li>
-                            {{ server.server_name }}
-                            <form method="POST" action="{{ url_for('delete_machine', machine_id=server.id) }}">
+                            <span>{{ server_name }} - Tier: {{ tier }}</span>
+                            <form method="POST" action="{{ url_for('delete_server') }}">
+                                <input type="hidden" name="server_name" value="{{ server_name }}">
                                 <button type="submit" class="delete-btn">Delete</button>
                             </form>
                         </li>
@@ -189,8 +183,9 @@
                 <p>No servers right now.</p>
             {% endif %}
         </div>
+
         <div class="create-machine">
-            <a href="{{ url_for('server_settings') }}">Click here to create a new machine</a>
+            <a href="{{ url_for('server_settings') }}">Click here to create a new server</a>
         </div>
         <div class="logout-link">
             <a href="/logout">Log out</a>

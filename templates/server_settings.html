@@ -14,8 +14,11 @@
     </div>
     <div class="content">
         <h1>Choose Your Options</h1>
-        <form id="choicesForm">
+        <form id="choicesForm" action="{{ url_for('create_server') }}" method="post">
             <input type="hidden" id="user_id" value="{{ user_id }}">
+            <!-- Server Name Input Field Added Here -->
+            <label for="serverName">Server Name:</label>
+            <input type="text" id="serverName" name="serverName" required>
             <label for="server">Choose a tier:</label>
             <select name="tiers" id="tiers">
                 <option value="wood">Wooden</option>
@@ -28,9 +31,9 @@
             <input type="text" name="option" class="select">
             <h1> What would you like the game mode to be? </h1>
             <label><input type="radio" name="option0" class="select" value="Survival"> Survival</label>
-            <label><input type="radio" name="option0" class="select" value="Creative"> Creative</label> 
+            <label><input type="radio" name="option0" class="select" value="Creative"> Creative</label>
             <h1> Flavor text of your server </h1>
-            <input type="text" name="option1" class="select">       
+            <input type="text" name="option1" class="select">
             <h1> What difficulty would you like the game to be in? </h1>
             <label><input type="radio" name="option2" class="select" value="Peaceful"> Peaceful mode</label>
             <label><input type="radio" name="option2" class="select" value="Easy"> Easy mode</label>
@@ -39,21 +42,20 @@
             <h1>Do you want the server to be online?</h1>
             <label><input type="radio" name="option3" class="select" value="True" onclick="showDropdown()">Yes</label>
             <label><input type="radio" name="option3" class="select" value="False" onclick="hideDropdown()">No</label><br>
-                <div class="dropdown" id="numberDropdown">
-                    <h1>Do you want to enable pvp?</h1>
-                    <label><input type="radio" name="option4" class="select" value="True">Yes</label>
-                    <label><input type="radio" name="option4" class="select" value="False">No</label><br>
-                    <h1>Max players:</h1>
-                    <select id="number" name="option5">
-                        <!-- Generate options from 1 to 100 -->
-                        <script>
-                            for (let i = 1; i <= 100; i++) {
-                                document.write('<option value="' + i + '">' + i + '</option>');
-                            }
-                        </script>
-                    </select><br>
-
-                </div>
+            <div class="dropdown" id="numberDropdown">
+                <h1>Do you want to enable pvp?</h1>
+                <label><input type="radio" name="option4" class="select" value="True">Yes</label>
+                <label><input type="radio" name="option4" class="select" value="False">No</label><br>
+                <h1>Max players:</h1>
+                <select id="number" name="option5">
+                    <!-- Generate options from 1 to 100 -->
+                    <script>
+                        for (let i = 1; i <= 100; i++) {
+                            document.write('<option value="' + i + '">' + i + '</option>');
+                        }
+                    </script>
+                </select><br>
+            </div>
             <h1>Max chunks:</h1>
             <select id="number" name="option6">
                 <script>
@@ -68,11 +70,9 @@
             <h1>Do you want to generate structures(villages,temples....)</h1>
             <label><input type="radio" name="option8" class="select" value="True">Yes</label>
             <label><input type="radio" name="option8" class="select" value="False">No</label><br>
-            <button type="button" onclick="sendData()">Send</button>
+            <button type="submit">Send</button>
         </form>
     </div>
-
-    </script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

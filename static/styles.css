@@ -1,13 +1,12 @@
 body {
     font-family: Arial, sans-serif;
     padding: 0;
-    margin: 0; /* Remove default margin */
-    background-image: url("mc_background.png"); 
-    background-size: cover; /* Scale the image to cover the entire viewport */
-    background-position: center; /* Center the image */
-    background-repeat: no-repeat; /* Do not repeat the image */
+    margin: 0;
+    background-image: url("mc_background.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     background-attachment: fixed;
-      
 }
 
 .menu {
@@ -15,9 +14,20 @@ body {
     overflow: hidden;
 }
 
+.content {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    text-align: center;
+    margin-top: 50px;
+}
+
 .send-button {
     position: fixed;
-    bottom: 180px; /* Adjust as needed */
+    bottom: 180px;
     right: 900px;
 }
 
@@ -37,15 +47,6 @@ body {
     transition: transform 0.3s;
 }
 
-/* .tier {
-    width: 200px;
-    height:200px;
-}
-.tier:hover {
-    border-style: solid;
-    border-color:#004466;
-}  */
-
 #tier {
     display: flex;
     flex-direction: column-reverse;
@@ -53,35 +54,25 @@ body {
     text-align: center;
 }
 
-
 #hidden_text {
     display: hidden;
 }
-/* #hidden_text:hover {
-
-} */
-
 
 .active{
     border: 5px solid #005580;
 }
-  
-
 
 .server-image:hover {
-    transform: translateX(-1rem);
-    transform: translateY(-1rem);
-
-     /* Make the image slightly smaller on hover */
+    transform: translateX(-1rem) translateY(-1rem);
 }
 
 .server-image:checked {
-    filter: brightness(0.8); /* Make the image slightly darker when selected */
-    transform: scale(0.9); /* Keep the image slightly smaller when selected */
+    filter: brightness(0.8);
+    transform: scale(0.9);
 }
 
 .server-image:active {
-    transform: scale(0.9); /* Apply a slight scale-down effect when clicked */
+    transform: scale(0.9);
 }
 
 .server-button {
@@ -100,7 +91,6 @@ body {
     cursor: not-allowed;
 }
 
-
 .menu a {
     float: left;
     color: white;
@@ -112,16 +102,6 @@ body {
 
 .menu a:hover {
     background-color: #004466;
-}
-
-.content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
-    text-align: center;
-    margin-top: 50px;
 }
 
 h1 {
@@ -180,7 +160,7 @@ button:hover {
 }
 
 button.delete-btn {
-    background-color: #dc3545; /* Red color for delete button */
+    background-color: #dc3545;
     color: white;
     border: none;
     padding: 5px 10px;
@@ -188,5 +168,5 @@ button.delete-btn {
 }
 
 button.delete-btn:hover {
-    background-color: #c82333; /* Darker red on hover */
+    background-color: #c82333;
 }
