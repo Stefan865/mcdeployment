@@ -4,41 +4,27 @@
     <title>Select Servers</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
     <script>
-        const divs = ['.tier1', '.tier2', '.tier3', '.tier4', '.tier5']
-        function removeGlowingDivs() {
-            divs.forEach(item => {
-                document.querySelector(item).classList.remove('active')
-            })
-        }
-
-        function highlightDiv(className) {
-            removeGlowingDivs();
-            document.querySelector(className).classList.add('active')
-        }
-
-        function toggleCheckbox(event, inputId) {
+        function toggleDetails(event, tierClass) {
             event.stopPropagation();
-            const checkbox = document.getElementById(inputId);
-            checkbox.checked = !checkbox.checked;
+            const tier = document.querySelector('.' + tierClass);
+            tier.classList.toggle('active');
         }
     </script>
 </head>
-
 <body>
     <div class="menu">
         <a href="/home">Home</a>
-        <a href="/services">Services</a>
-        <a href="/contacts">Contacts</a>
-        <a href="/about">About</a>
+        <a href="/service_desk">Service Desk</a>
         <a href="/login">Login</a>
     </div>
     <div class="content">
         <h1>Select Your Servers</h1>
         <form id="serversForm" method="POST" action="{{ url_for('submit_servers') }}">
-            <div id='tier' class="tier1" onclick="highlightDiv('.tier1'); toggleCheckbox(event, 'serverA')">
+            <div class="tier tier1" onclick="toggleDetails(event, 'tier1')">
                 <input type="checkbox" name="server" class="select" value="Server A" id="serverA">
-                <span id="hidden_text">
-                    <ul>
+                <span class="server-info">
+                    <img src="{{ url_for('static', filename='wooden_pickaxe.png') }}" alt="Server A" class="server-image">
+                    <ul class="hidden-text">
                         <li>Perfect for small groups.</li>
                         <li><strong>CPU:</strong> 1 vCPU</li>
                         <li><strong>RAM:</strong> 2 GB</li>
@@ -51,12 +37,12 @@
                         <li>Automatic Backups</li>
                     </ul>
                 </span>
-                <center><img src="{{ url_for('static', filename='wooden_pickaxe.png') }}" alt="Server A" class="server-image"></center>
             </div>
-            <div id='tier' class="tier2" onclick="highlightDiv('.tier2'); toggleCheckbox(event, 'serverB')">
+            <div class="tier tier2" onclick="toggleDetails(event, 'tier2')">
                 <input type="checkbox" name="server" class="select" value="Server B" id="serverB">
-                <span id="hidden_text">
-                    <ul>
+                <span class="server-info">
+                    <img src="{{ url_for('static', filename='stone_pickaxe.png') }}" alt="Server B" class="server-image">
+                    <ul class="hidden-text">
                         <li><strong>CPU:</strong> 2 vCPUs</li>
                         <li><strong>RAM:</strong> 4 GB</li>
                         <li><strong>Storage:</strong> 40 GB SSD</li>
@@ -70,12 +56,12 @@
                         </ul>
                     </ul>
                 </span>
-                <center><img src="{{ url_for('static', filename='stone_pickaxe.png') }}" alt="Server B" class="server-image"></center>
             </div>
-            <div id='tier' class="tier3" onclick="highlightDiv('.tier3'); toggleCheckbox(event, 'serverC')">
+            <div class="tier tier3" onclick="toggleDetails(event, 'tier3')">
                 <input type="checkbox" name="server" class="select" value="Server C" id="serverC">
-                <span id="hidden_text">
-                    <ul>
+                <span class="server-info">
+                    <img src="{{ url_for('static', filename='iron_pickaxe.png') }}" alt="Server C" class="server-image">
+                    <ul class="hidden-text">
                         <li><strong>CPU:</strong> 3 vCPUs</li>
                         <li><strong>RAM:</strong> 6 GB</li>
                         <li><strong>Storage:</strong> 60 GB SSD</li>
@@ -89,12 +75,12 @@
                         </ul>
                     </ul>
                 </span>
-                <center><img src="{{ url_for('static', filename='iron_pickaxe.png') }}" alt="Server C" class="server-image"></center>
             </div>
-            <div id='tier' class="tier4" onclick="highlightDiv('.tier4'); toggleCheckbox(event, 'serverD')">
+            <div class="tier tier4" onclick="toggleDetails(event, 'tier4')">
                 <input type="checkbox" name="server" class="select" value="Server D" id="serverD">
-                <span id="hidden_text">
-                    <ul>
+                <span class="server-info">
+                    <img src="{{ url_for('static', filename='golden_pickaxe.png') }}" alt="Server D" class="server-image">
+                    <ul class="hidden-text">
                         <li><strong>CPU:</strong> 4 vCPUs</li>
                         <li><strong>RAM:</strong> 8 GB</li>
                         <li><strong>Storage:</strong> 80 GB SSD</li>
@@ -108,12 +94,12 @@
                         </ul>
                     </ul>
                 </span>
-                <center><img src="{{ url_for('static', filename='golden_pickaxe.png') }}" alt="Server D" class="server-image"></center>
             </div>
-            <div id='tier' class="tier5" onclick="highlightDiv('.tier5'); toggleCheckbox(event, 'serverE')">
+            <div class="tier tier5" onclick="toggleDetails(event, 'tier5')">
                 <input type="checkbox" name="server" class="select" value="Server E" id="serverE">
-                <span id="hidden_text">
-                    <ul>
+                <span class="server-info">
+                    <img src="{{ url_for('static', filename='diamond_pickaxe.png') }}" alt="Server E" class="server-image">
+                    <ul class="hidden-text">
                         <li><strong>CPU:</strong> 6 vCPUs</li>
                         <li><strong>RAM:</strong> 12 GB</li>
                         <li><strong>Storage:</strong> 120 GB SSD</li>
@@ -127,20 +113,9 @@
                         </ul>
                     </ul>
                 </span>
-                <center><img src="{{ url_for('static', filename='diamond_pickaxe.png') }}" alt="Server E" class="server-image"></center>
             </div>
             <button type="submit" class="send-button">Send</button>
         </form>
-        <script type="text/javascript">
-            document.querySelectorAll('.select').forEach(item => {
-                item.addEventListener('change', function() {
-                    document.querySelectorAll('.select').forEach(checkbox => {
-                        if (checkbox !== this) checkbox.checked = false;
-                    });
-                });
-            });
-        </script>
     </div>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

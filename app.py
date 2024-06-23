@@ -2,22 +2,20 @@ from flask import Flask, render_template, redirect, url_for, request, flash, ses
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 from mcrcon import MCRcon
 import random
 import bcrypt
+from wtforms.validators import DataRequired
+from forms import TicketForm
 
 app = Flask(__name__)
 
 bcrypt2 = Bcrypt(app)
 
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://webuserdb:math1234@ec2-18-153-177-227.eu-central-1.compute.amazonaws.com:5432/mchosting'
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost:5432/test'
-
-
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:7073@localhost:5432/test'
 app.config['SECRET_KEY'] = 'thisisasecretkey'
 db = SQLAlchemy(app)
 
@@ -99,6 +97,19 @@ def home():
     return render_template('index.html')
 
 
+@app.route('/service_desk', methods=['GET', 'POST'])
+def service_desk():
+    form = TicketForm()
+    if form.validate_on_submit():
+        # Process the form data (e.g., save to Trello, database, etc.)
+        # For simplicity, let's assume printing the data for now
+        print(f'Title: {form.title.data}')
+        print(f'Body: {form.body.data}')
+        print(f'User: {form.user.data}')
+        return redirect(url_for('home'))  # Redirect to home or another page after submission
+    return render_template('service_desk.html', form=form)
+
+
 @app.route('/dashboard', methods=['GET'])
 @login_required
 def dashboard():
@@ -116,11 +127,6 @@ def dashboard():
 def logout():
     logout_user()
     return redirect(url_for('home'))
-
-
-@app.route('/services')
-def services():
-    return render_template('services.html')
 
 
 @app.route('/server_settings', methods=['GET', 'POST'])
@@ -160,16 +166,6 @@ def server_details():
         'tier': user.tier
     }
     return render_template('server_details.html', **server_info)
-
-
-@app.route('/contacts')
-def contacts():
-    return render_template('contacts.html')
-
-
-@app.route('/about')
-def about():
-    return render_template('about.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])

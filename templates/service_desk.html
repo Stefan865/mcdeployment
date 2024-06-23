@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Desk</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="menu">
+        <a href="/home">Home</a>
+        <a href="/service_desk">Service Desk</a>
+        <a href="/login">Login</a>
+    </div>
+    <div class="content">
+        <div class="main-container">
+            <h1>Service Desk</h1>
+            <p class="description">Welcome to the service desk. How can we assist you today?</p>
+
+            <!-- Form -->
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <div>
+                    {{ form.title.label }}<br>
+                    {{ form.title(size=50) }}<br>
+                    {% for error in form.title.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </div>
+                <div>
+                    {{ form.body.label }}<br>
+                    {{ form.body(rows=10, cols=50) }}<br>
+                    {% for error in form.body.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </div>
+                <div>
+                    {{ form.user.label }}<br>
+                    {{ form.user(size=50) }}<br>
+                    {% for error in form.user.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </div>
+                <div>
+                    {{ form.submit() }}
+                </div>
+            </form>
+
+        </div>
+    </div>
+</body>
+</html>
