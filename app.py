@@ -15,7 +15,7 @@ app = Flask(__name__)
 
 bcrypt2 = Bcrypt(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:7073@localhost:5432/test'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://webuserdb:math1234@ip-10-0-159-217.eu-central-1.compute.internal:5432/mchosting'
 app.config['SECRET_KEY'] = 'thisisasecretkey'
 db = SQLAlchemy(app)
 
