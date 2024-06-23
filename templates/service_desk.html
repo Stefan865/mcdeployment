@@ -36,7 +36,12 @@
                 </div>
                 <div>
                     {{ form.user.label }}<br>
-                    {{ form.user(size=50) }}<br>
+                    {% if current_user.is_authenticated %}
+                        {{ form.user(size=50, readonly=true, value=current_user.username) }}
+                    {% else %}
+                        {{ form.user(size=50) }}
+                    {% endif %}
+                    <br>
                     {% for error in form.user.errors %}
                         <span style="color: red;">[{{ error }}]</span>
                     {% endfor %}
