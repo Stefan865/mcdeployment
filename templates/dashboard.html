@@ -143,8 +143,7 @@
 <body>
     <div class="menu">
         <a href="/home">Home</a>
-        <a href="/service_desk">Services</a>
-        <a href="/server_settings">Server Settings</a>
+        <a href="/service_desk">Service Desk</a>
         <a href="/logout">Logout</a>
     </div>
     <div class="container">
@@ -202,9 +201,11 @@
         <div class="logout-link">
             <a href="{{ url_for('logout') }}">Logout</a>
         </div>
+        {% if not server_names %}
         <div class="create-machine">
             <a href="{{ url_for('server_settings') }}">Create New Server</a>
         </div>
+        {% endif %}
     </div>
 </body>
 </html>

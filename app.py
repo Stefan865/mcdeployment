@@ -241,11 +241,32 @@ def create_server():
         user.tier = tiers  # Keep using tiers for the tier information
         db.session.commit()
 
-    # Placeholder for where you would send the data to the external service
-    # Once integrated, replace this with the actual API call
-    # Example: response = requests.post('http://external-service.com/api', json=server_data)
+    # Prepare data to be sent to the external service
+    server_data = {
+        'serverName': server_name,
+        'tiers': tiers,
+        'seed': seed,
+        'gameMode': game_mode,
+        'flavorText': flavor_text,
+        'difficulty': difficulty,
+        'onlineStatus': online_status,
+        'pvpEnabled': pvp_enabled,
+        'maxPlayers': max_players,
+        'maxChunks': max_chunks,
+        'hardcore': hardcore,
+        'generateStructures': generate_structures
+    }
+
+    # Send the data to the external service
+    response = requests.post('https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/prod/create', json=server_data)
 
     # Process the response from the external service (if any)
+    if response.status_code == 200:
+        # Successful response handling, if needed
+        pass
+    else:
+        # Error handling, if needed
+        pass
 
     # Redirect to dashboard
     return redirect(url_for('dashboard'))
@@ -255,7 +276,7 @@ def create_server():
 @login_required
 def start_server():
     user_id = 135790  # Replace with your actual user_id
-    api_gateway_url = "https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/devStartStop/start"
+    api_gateway_url = "https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/prod/start"
     params = {'user_id': user_id}
 
     max_retries = 5
@@ -322,7 +343,7 @@ def ping_server(domain, port):
 @login_required
 def stop_server():
     user_id = 135790  # Replace with your actual user_id
-    api_gateway_url = "https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/devStartStop/stop"
+    api_gateway_url = "https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/prod/stop"
     params = {'user_id': user_id}
 
     max_retries = 5
@@ -356,7 +377,7 @@ def stop_server():
 @login_required
 def delete_server():
     user_id = 135790
-    api_gateway_url = "https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/devStartStop/delete"
+    api_gateway_url = "https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/prod/delete"
     params = {'user_id': user_id}
 
     max_retries = 5
@@ -394,7 +415,6 @@ def delete_server():
     return redirect(url_for('dashboard'))
 
 
-
 @app.route('/upgrade_tier', methods=['GET', 'POST'])
 @login_required
 def upgrade_tier():
@@ -402,9 +422,20 @@ def upgrade_tier():
         new_tier = request.form['tier']
         user = Users.query.filter_by(user_id=current_user.user_id).first()
         if user:
-            user.tier = new_tier
-            db.session.commit()
-            flash('Tier upgraded successfully!', 'success')
+            # Send the request to the API
+            api_response = requests.post(
+                'https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/prod/upgrade',
+                json={'user_id': user.user_id, 'tier': new_tier}
+            )
+
+            # Check the response from the API
+            if api_response.status_code == 200 and api_response.json().get('status') == 'success':
+                user.tier = new_tier
+                db.session.commit()  # Only commit if the API call was successful
+                flash('Tier upgraded successfully!', 'success')
+            else:
+                flash('Failed to upgrade tier. Please try again later.', 'error')
+
             return redirect(url_for('dashboard'))
 
     return render_template('upgrade_tier.html')
