@@ -222,40 +222,60 @@ def connect():
 def create_server():
     # Extract form data
     server_name = request.form['serverName']
-    tiers = request.form['tiers']
-    seed = request.form['option']
-    game_mode = request.form['option0']
-    flavor_text = request.form['option1']
-    difficulty = request.form['option2']
-    online_status = request.form['option3']
-    pvp_enabled = request.form['option4']
-    max_players = int(request.form['option5'])
-    max_chunks = int(request.form['option6'])
-    hardcore = request.form['option7']
-    generate_structures = request.form['option8']
+    tier = request.form['tiers']
+    level_seed = request.form['level_seed']
+    gamemode = request.form['gamemode']
+    motd = request.form['motd']
+    pvp = request.form['pvp']
+    difficulty = request.form['difficulty']
+    max_players = request.form['max_players']
+    online_mode = request.form['online_mode']
+    view_distance = request.form['view_distance']
+    hardcore = request.form['hardcore']
 
     # Save server name and tier to the database
     user = Users.query.filter_by(user_id=current_user.user_id).first()
     if user:
-        user.server_name = server_name  # Use the extracted server_name variable
-        user.tier = tiers  # Keep using tiers for the tier information
+        user.server_name = server_name
+        user.tier = tier
         db.session.commit()
 
-    # Placeholder for where you would send the data to the external service
-    # Once integrated, replace this with the actual API call
-    # Example: response = requests.post('http://external-service.com/api', json=server_data)
+    # Prepare data to be sent to the external service
+    server_data = {
+        "user_id": str(current_user.user_id),  # Ensure user_id is a string
+        "tier": tier,
+        "server_settings": {
+            "level_seed": level_seed,
+            "gamemode": gamemode,
+            "motd": motd,
+            "pvp": pvp,
+            "difficulty": difficulty,
+            "max_players": max_players,
+            "online_mode": online_mode,
+            "view_distance": view_distance,
+            "hardcore": hardcore
+        }
+    }
+
+    # Send the data to the external service
+    response = requests.post('https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/prod/create', json=server_data)
 
     # Process the response from the external service (if any)
+    if response.status_code == 200:
+        flash('Server created successfully!', 'success')
+    else:
+        flash('Failed to create server. Please try again later.', 'error')
 
     # Redirect to dashboard
     return redirect(url_for('dashboard'))
+
 
 
 @app.route('/start_server', methods=['GET'])
 @login_required
 def start_server():
     user_id = 135790  # Replace with your actual user_id
-    api_gateway_url = "https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/devStartStop/start"
+    api_gateway_url = "https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/prod/start"
     params = {'user_id': user_id}
 
     max_retries = 5
@@ -322,7 +342,7 @@ def ping_server(domain, port):
 @login_required
 def stop_server():
     user_id = 135790  # Replace with your actual user_id
-    api_gateway_url = "https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/devStartStop/stop"
+    api_gateway_url = "https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/prod/stop"
     params = {'user_id': user_id}
 
     max_retries = 5
@@ -356,7 +376,7 @@ def stop_server():
 @login_required
 def delete_server():
     user_id = 135790
-    api_gateway_url = "https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/devStartStop/delete"
+    api_gateway_url = "https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/prod/delete"
     params = {'user_id': user_id}
 
     max_retries = 5
@@ -394,7 +414,6 @@ def delete_server():
     return redirect(url_for('dashboard'))
 
 
-
 @app.route('/upgrade_tier', methods=['GET', 'POST'])
 @login_required
 def upgrade_tier():
@@ -402,9 +421,20 @@ def upgrade_tier():
         new_tier = request.form['tier']
         user = Users.query.filter_by(user_id=current_user.user_id).first()
         if user:
-            user.tier = new_tier
-            db.session.commit()
-            flash('Tier upgraded successfully!', 'success')
+            # Send the request to the API
+            api_response = requests.post(
+                'https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/prod/upgrade',
+                json={'user_id': user.user_id, 'tier': new_tier}
+            )
+
+            # Check the response from the API
+            if api_response.status_code == 200 and api_response.json().get('status') == 'success':
+                user.tier = new_tier
+                db.session.commit()  # Only commit if the API call was successful
+                flash('Tier upgraded successfully!', 'success')
+            else:
+                flash('Failed to upgrade tier. Please try again later.', 'error')
+
             return redirect(url_for('dashboard'))
 
     return render_template('upgrade_tier.html')
