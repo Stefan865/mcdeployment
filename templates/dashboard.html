@@ -54,13 +54,11 @@
             text-align: center;
         }
 
-        /* Error messages */
         .flash-message.error {
             background-color: #28a745;
             border-color: #f5c6cb;
         }
 
-        /* Success messages */
         .flash-message.success {
             color: #155724;
             background-color: #28a745;
@@ -146,10 +144,10 @@
     <div class="menu">
         <a href="/home">Home</a>
         <a href="/service_desk">Services</a>
+        <a href="/server_settings">Server Settings</a>
         <a href="/logout">Logout</a>
     </div>
     <div class="container">
-        <!-- Flash messages block -->
         {% with messages = get_flashed_messages() %}
             {% if messages %}
                 {% for message in messages %}
@@ -168,6 +166,12 @@
         </div>
         <div class="dashboard-item">
             <strong>Email:</strong> {{ current_user.email }}
+        </div>
+        <div class="dashboard-item">
+            <strong>Tier:</strong> {{ tier }}
+            <form method="GET" action="{{ url_for('upgrade_tier') }}">
+                <button type="submit" class="upgrade-btn">Upgrade</button>
+            </form>
         </div>
         <div class="machine-info">
             {% if server_names %}
@@ -191,20 +195,15 @@
                         <button type="submit" class="server-control-btn stop-btn">Stop Server</button>
                     </form>
                 </div>
+            {% else %}
+                <p>No servers found.</p>
             {% endif %}
         </div>
-
-        {% if not server_names %}
-            <div class="create-machine">
-                <a href="{{ url_for('server_settings') }}">Click here to create a new server</a>
-            </div>
-        {% endif %}
-
         <div class="logout-link">
-            <a href="/logout">Log out</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
         </div>
-        <div class="connect">
-            <a href="/connect">Connect to server</a>
+        <div class="create-machine">
+            <a href="{{ url_for('server_settings') }}">Create New Server</a>
         </div>
     </div>
 </body>

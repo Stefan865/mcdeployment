@@ -6,7 +6,7 @@ import requests
 
 class TicketForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
-    body = TextAreaField('Body', validators=[DataRequired()])
+    body = TextAreaField('Detailed Description', validators=[DataRequired()])
     user = StringField('User', validators=[DataRequired()])
     submit = SubmitField('Submit')
 

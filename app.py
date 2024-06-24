@@ -301,7 +301,9 @@ def start_server():
             if retry_count == max_retries:
                 flash(f"Failed to communicate with API after {max_retries} attempts: {str(e)}", "error")
             else:
-                flash(f"Failed to communicate with API. Retrying in {retry_delay} seconds... (Attempt {retry_count}/{max_retries})", "error")
+                flash(
+                    f"Failed to communicate with API. Retrying in {retry_delay} seconds... (Attempt {retry_count}/{max_retries})",
+                    "error")
                 time.sleep(retry_delay)
                 retry_delay *= 2  # Exponential backoff for retry delay
 
@@ -341,14 +343,16 @@ def stop_server():
             if retry_count == max_retries:
                 flash(f"Failed to communicate with API after {max_retries} attempts: {str(e)}", "error")
             else:
-                flash(f"Failed to communicate with API. Retrying in {retry_delay} seconds... (Attempt {retry_count}/{max_retries})", "error")
+                flash(
+                    f"Failed to communicate with API. Retrying in {retry_delay} seconds... (Attempt {retry_count}/{max_retries})",
+                    "error")
                 time.sleep(retry_delay)
                 retry_delay *= 2  # Exponential backoff for retry delay
 
     return redirect(url_for('dashboard'))
 
 
-@app.route('/delete_server', methods=['GET'])
+@app.route('/delete_server', methods=['POST'])
 @login_required
 def delete_server():
     user_id = 135790
@@ -362,7 +366,7 @@ def delete_server():
     while retry_count < max_retries:
         try:
             # Send user_id as query parameter to the API gateway with extended timeout
-            response = requests.get(api_gateway_url, params=params, timeout=30)
+            response = requests.post(api_gateway_url, params=params, timeout=30)
             response.raise_for_status()
 
             # Assuming the API Gateway returns a JSON response with success message
@@ -381,11 +385,29 @@ def delete_server():
             if retry_count == max_retries:
                 flash(f"Failed to communicate with API after {max_retries} attempts: {str(e)}", "error")
             else:
-                flash(f"Failed to communicate with API. Retrying in {retry_delay} seconds... (Attempt {retry_count}/{max_retries})", "error")
+                flash(
+                    f"Failed to communicate with API. Retrying in {retry_delay} seconds... (Attempt {retry_count}/{max_retries})",
+                    "error")
                 time.sleep(retry_delay)
                 retry_delay *= 2  # Exponential backoff for retry delay
 
     return redirect(url_for('dashboard'))
+
+
+
+@app.route('/upgrade_tier', methods=['GET', 'POST'])
+@login_required
+def upgrade_tier():
+    if request.method == 'POST':
+        new_tier = request.form['tier']
+        user = Users.query.filter_by(user_id=current_user.user_id).first()
+        if user:
+            user.tier = new_tier
+            db.session.commit()
+            flash('Tier upgraded successfully!', 'success')
+            return redirect(url_for('dashboard'))
+
+    return render_template('upgrade_tier.html')
 
 
 @app.route('/submit_servers', methods=['POST'])
@@ -400,5 +422,5 @@ def submit_servers():
     return redirect(url_for('dashboard'))
 
 
-# if __name__ == '__main__':
-#     app.run(debug=True, port=80)
+if __name__ == '__main__':
+    app.run(debug=True, port=80)
