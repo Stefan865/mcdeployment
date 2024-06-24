@@ -222,39 +222,39 @@ def connect():
 def create_server():
     # Extract form data
     server_name = request.form['serverName']
-    tiers = request.form['tiers']
-    seed = request.form['option']
-    game_mode = request.form['option0']
-    flavor_text = request.form['option1']
-    difficulty = request.form['option2']
-    online_status = request.form['option3']
-    pvp_enabled = request.form['option4']
-    max_players = int(request.form['option5'])
-    max_chunks = int(request.form['option6'])
-    hardcore = request.form['option7']
-    generate_structures = request.form['option8']
+    tier = request.form['tiers']
+    level_seed = request.form['level_seed']
+    gamemode = request.form['gamemode']
+    motd = request.form['motd']
+    pvp = request.form['pvp']
+    difficulty = request.form['difficulty']
+    max_players = request.form['max_players']
+    online_mode = request.form['online_mode']
+    view_distance = request.form['view_distance']
+    hardcore = request.form['hardcore']
 
     # Save server name and tier to the database
     user = Users.query.filter_by(user_id=current_user.user_id).first()
     if user:
-        user.server_name = server_name  # Use the extracted server_name variable
-        user.tier = tiers  # Keep using tiers for the tier information
+        user.server_name = server_name
+        user.tier = tier
         db.session.commit()
 
     # Prepare data to be sent to the external service
     server_data = {
-        'serverName': server_name,
-        'tiers': tiers,
-        'seed': seed,
-        'gameMode': game_mode,
-        'flavorText': flavor_text,
-        'difficulty': difficulty,
-        'onlineStatus': online_status,
-        'pvpEnabled': pvp_enabled,
-        'maxPlayers': max_players,
-        'maxChunks': max_chunks,
-        'hardcore': hardcore,
-        'generateStructures': generate_structures
+        "user_id": str(current_user.user_id),  # Ensure user_id is a string
+        "tier": tier,
+        "server_settings": {
+            "level_seed": level_seed,
+            "gamemode": gamemode,
+            "motd": motd,
+            "pvp": pvp,
+            "difficulty": difficulty,
+            "max_players": max_players,
+            "online_mode": online_mode,
+            "view_distance": view_distance,
+            "hardcore": hardcore
+        }
     }
 
     # Send the data to the external service
@@ -262,14 +262,13 @@ def create_server():
 
     # Process the response from the external service (if any)
     if response.status_code == 200:
-        # Successful response handling, if needed
-        pass
+        flash('Server created successfully!', 'success')
     else:
-        # Error handling, if needed
-        pass
+        flash('Failed to create server. Please try again later.', 'error')
 
     # Redirect to dashboard
     return redirect(url_for('dashboard'))
+
 
 
 @app.route('/start_server', methods=['GET'])
