@@ -5,7 +5,6 @@ on:
     workflows: ["CD Pipeline"]
     types:
       - completed
-
 jobs:
 
   build:
