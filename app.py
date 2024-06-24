@@ -10,6 +10,9 @@ import random
 import bcrypt
 from wtforms.validators import DataRequired
 from forms import TicketForm
+import requests
+import socket
+import time
 
 app = Flask(__name__)
 
@@ -99,8 +102,11 @@ def home():
 
 
 @app.route('/service_desk', methods=['GET', 'POST'])
+@login_required
 def service_desk():
     form = TicketForm()
+    form.user.data = current_user.username  # Pre-fill username field with current user
+
     if form.validate_on_submit():
         # Process the form data (e.g., save to Trello)
         if form.send_to_trello():
@@ -108,6 +114,7 @@ def service_desk():
         else:
             # Handle error if card creation fails
             return "Failed to create Trello card. Please try again later."
+
     return render_template('service_desk.html', form=form)
 
 
@@ -244,38 +251,139 @@ def create_server():
     return redirect(url_for('dashboard'))
 
 
-@app.route('/start_server', methods=['POST'])
+@app.route('/start_server', methods=['GET'])
 @login_required
 def start_server():
-    flash("Server started successfully.")
+    user_id = 135790  # Replace with your actual user_id
+    api_gateway_url = "https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/devStartStop/start"
+    params = {'user_id': user_id}
+
+    max_retries = 5
+    retry_delay = 10  # Initial delay before first retry in seconds
+    retry_count = 0
+
+    while retry_count < max_retries:
+        try:
+            # Send user_id as query parameter to the API gateway with extended timeout
+            response = requests.get(api_gateway_url, params=params, timeout=30)
+            response.raise_for_status()
+
+            # Assuming the API Gateway returns a JSON response with the domain
+            response_data = response.json()
+            domain = response_data.get('access_domain')
+
+            if not domain:
+                flash("Failed to retrieve domain from API response.", "error")
+                return redirect(url_for('dashboard'))
+
+            # Function to ping server and check if it's running
+            def check_server_status(domain, port):
+                try:
+                    with socket.create_connection((domain, port), timeout=10) as conn:
+                        return True
+                except (socket.timeout, socket.error) as e:
+                    return False
+
+            # Polling mechanism to check server status
+            max_attempts = 24  # 24 attempts * 5 seconds = 120 seconds (2 minutes)
+            for attempt in range(max_attempts):
+                if check_server_status(domain, 25575):
+                    flash(f"Server is running. Access domain: {domain}", "success")
+                    return redirect(url_for('dashboard'))
+                else:
+                    time.sleep(5)  # Wait for 5 seconds before checking again
+
+            flash("Server failed to start or timed out after 2 minutes.", "error")
+            return redirect(url_for('dashboard'))
+
+        except requests.RequestException as e:
+            retry_count += 1
+            if retry_count == max_retries:
+                flash(f"Failed to communicate with API after {max_retries} attempts: {str(e)}", "error")
+            else:
+                flash(f"Failed to communicate with API. Retrying in {retry_delay} seconds... (Attempt {retry_count}/{max_retries})", "error")
+                time.sleep(retry_delay)
+                retry_delay *= 2  # Exponential backoff for retry delay
+
     return redirect(url_for('dashboard'))
+
+
+def ping_server(domain, port):
+    try:
+        with socket.create_connection((domain, port), timeout=10):
+            return True
+    except (socket.timeout, socket.error):
+        return False
 
 
 @app.route('/stop_server', methods=['POST'])
 @login_required
 def stop_server():
-    flash("Server stopped successfully.")
+    user_id = 135790  # Replace with your actual user_id
+    api_gateway_url = "https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/devStartStop/stop"
+    params = {'user_id': user_id}
+
+    max_retries = 5
+    retry_delay = 10  # Initial delay before first retry in seconds
+    retry_count = 0
+
+    while retry_count < max_retries:
+        try:
+            # Send user_id as query parameter to the API gateway with extended timeout
+            response = requests.post(api_gateway_url, params=params, timeout=30)
+            response.raise_for_status()
+
+            flash("Server stopped successfully.", "success")
+            return redirect(url_for('dashboard'))
+
+        except requests.RequestException as e:
+            retry_count += 1
+            if retry_count == max_retries:
+                flash(f"Failed to communicate with API after {max_retries} attempts: {str(e)}", "error")
+            else:
+                flash(f"Failed to communicate with API. Retrying in {retry_delay} seconds... (Attempt {retry_count}/{max_retries})", "error")
+                time.sleep(retry_delay)
+                retry_delay *= 2  # Exponential backoff for retry delay
+
     return redirect(url_for('dashboard'))
 
 
-@app.route('/delete_server', methods=['POST'])
+@app.route('/delete_server', methods=['GET'])
 @login_required
 def delete_server():
-    user_id = current_user.get_id()
-    user = Users.query.get(int(user_id))
-    server_name_to_delete = request.form.get('server_name')
+    user_id = 135790
+    api_gateway_url = "https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/devStartStop/delete"
+    params = {'user_id': user_id}
 
-    if user and user.server_name:
-        servers = user.server_name.split(',')
-        if server_name_to_delete in servers:
-            servers.remove(server_name_to_delete)
-            user.server_name = ','.join(servers)
-            db.session.commit()
-            flash(f"Server {server_name_to_delete} deleted successfully.", "success")
-        else:
-            flash("Server not found or invalid server name.", "error")
-    else:
-        flash("User not found or user has no servers.", "error")
+    max_retries = 5
+    retry_delay = 10  # Initial delay before first retry in seconds
+    retry_count = 0
+
+    while retry_count < max_retries:
+        try:
+            # Send user_id as query parameter to the API gateway with extended timeout
+            response = requests.get(api_gateway_url, params=params, timeout=30)
+            response.raise_for_status()
+
+            # Assuming the API Gateway returns a JSON response with success message
+            response_data = response.json()
+            success = response_data.get('success')
+
+            if success:
+                flash("Server deletion initiated successfully.", "success")
+            else:
+                flash("Failed to delete server. Please try again later.", "error")
+
+            return redirect(url_for('dashboard'))
+
+        except requests.RequestException as e:
+            retry_count += 1
+            if retry_count == max_retries:
+                flash(f"Failed to communicate with API after {max_retries} attempts: {str(e)}", "error")
+            else:
+                flash(f"Failed to communicate with API. Retrying in {retry_delay} seconds... (Attempt {retry_count}/{max_retries})", "error")
+                time.sleep(retry_delay)
+                retry_delay *= 2  # Exponential backoff for retry delay
 
     return redirect(url_for('dashboard'))
 
