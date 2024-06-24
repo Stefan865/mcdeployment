@@ -18,8 +18,8 @@ app = Flask(__name__)
 
 bcrypt2 = Bcrypt(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://webuserdb:math1234@ip-10-0-159-217.eu-central-1.compute.internal:5432/mchosting'
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:7073@localhost:5432/test'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://webuserdb:math1234@ip-10-0-159-217.eu-central-1.compute.internal:5432/mchosting'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:7073@localhost:5432/test'
 app.config['SECRET_KEY'] = 'thisisasecretkey'
 db = SQLAlchemy(app)
 
@@ -259,7 +259,8 @@ def create_server():
         }
 
         # Send the data to the external service
-        response = requests.post('https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/prod/create', json=server_data)
+        response = requests.post('https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/prod/create',
+                                 json=server_data)
 
         # Check the response from the external service
         if response.status_code == 200:
@@ -268,8 +269,12 @@ def create_server():
             flash('Failed to create server. Please try again later.', 'error')
             print(f"API response: {response.text}")
 
+    except requests.RequestException as e:
+        flash(f"An error occurred with the request: {str(e)}", 'error')
+        print(f"Request Exception: {str(e)}")
+
     except Exception as e:
-        flash(f"An error occurred: {str(e)}", 'error')
+        flash(f"An unexpected error occurred: {str(e)}", 'error')
         print(f"Exception: {str(e)}")
 
     # Redirect to dashboard or any other appropriate page
@@ -426,22 +431,12 @@ def upgrade_tier():
         new_tier = request.form['tier']
         user = Users.query.filter_by(user_id=current_user.user_id).first()
         if user:
-            # Send the request to the API
-            api_response = requests.post(
-                'https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/prod/upgrade',
-                json={'user_id': user.user_id, 'tier': new_tier}
-            )
-
-            # Check the response from the API
-            if api_response.status_code == 200 and api_response.json().get('status') == 'success':
-                user.tier = new_tier
-                db.session.commit()  # Only commit if the API call was successful
-                flash('Tier upgraded successfully!', 'success')
-            else:
-                flash('Failed to upgrade tier. Please try again later.', 'error')
-
+            user.tier = new_tier
+            db.session.commit()
+            flash('Successfully changed tier!', 'success')
             return redirect(url_for('dashboard'))
 
+    flash('Select a tier to upgrade.', 'info')
     return render_template('upgrade_tier.html')
 
 
