@@ -421,5 +421,5 @@ def submit_servers():
     return redirect(url_for('dashboard'))
 
 
-if __name__ == '__main__':
-    app.run(debug=True, port=80)
+# if __name__ == '__main__':
+#     app.run(debug=True, port=80)
