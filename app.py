@@ -352,7 +352,7 @@ def stop_server():
     return redirect(url_for('dashboard'))
 
 
-@app.route('/delete_server', methods=['GET'])
+@app.route('/delete_server', methods=['POST'])
 @login_required
 def delete_server():
     user_id = 135790
@@ -366,7 +366,7 @@ def delete_server():
     while retry_count < max_retries:
         try:
             # Send user_id as query parameter to the API gateway with extended timeout
-            response = requests.get(api_gateway_url, params=params, timeout=30)
+            response = requests.post(api_gateway_url, params=params, timeout=30)
             response.raise_for_status()
 
             # Assuming the API Gateway returns a JSON response with success message
@@ -392,6 +392,7 @@ def delete_server():
                 retry_delay *= 2  # Exponential backoff for retry delay
 
     return redirect(url_for('dashboard'))
+
 
 
 @app.route('/upgrade_tier', methods=['GET', 'POST'])
@@ -421,5 +422,5 @@ def submit_servers():
     return redirect(url_for('dashboard'))
 
 
-# if __name__ == '__main__':
-#     app.run(debug=True, port=80)
+if __name__ == '__main__':
+    app.run(debug=True, port=80)
