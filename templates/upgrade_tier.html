@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Upgrade Tier</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .menu {
+            background-color: #005580;
+            overflow: hidden;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .menu a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        .menu a:hover {
+            background-color: #004466;
+            color: white;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 600px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .form-group button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .form-group button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu">
+        <a href="/home">Home</a>
+        <a href="/service_desk">Services</a>
+        <a href="/logout">Logout</a>
+    </div>
+    <div class="container">
+        <h1>Upgrade Tier</h1>
+        <form method="POST">
+            <div class="form-group">
+                <label for="tier">Select New Tier:</label>
+                <select id="tier" name="tier">
+                    <option value="wood">Wooden</option>
+                    <option value="stone">Stone</option>
+                    <option value="iron">Iron</option>
+                    <option value="gold">Gold</option>
+                    <option value="diamond">Diamond</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit">Upgrade</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

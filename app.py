@@ -18,8 +18,8 @@ app = Flask(__name__)
 
 bcrypt2 = Bcrypt(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://webuserdb:math1234@ip-10-0-159-217.eu-central-1.compute.internal:5432/mchosting'
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:7073@localhost:5432/test'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://webuserdb:math1234@ip-10-0-159-217.eu-central-1.compute.internal:5432/mchosting'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:7073@localhost:5432/test'
 app.config['SECRET_KEY'] = 'thisisasecretkey'
 db = SQLAlchemy(app)
 
@@ -301,7 +301,9 @@ def start_server():
             if retry_count == max_retries:
                 flash(f"Failed to communicate with API after {max_retries} attempts: {str(e)}", "error")
             else:
-                flash(f"Failed to communicate with API. Retrying in {retry_delay} seconds... (Attempt {retry_count}/{max_retries})", "error")
+                flash(
+                    f"Failed to communicate with API. Retrying in {retry_delay} seconds... (Attempt {retry_count}/{max_retries})",
+                    "error")
                 time.sleep(retry_delay)
                 retry_delay *= 2  # Exponential backoff for retry delay
 
@@ -341,7 +343,9 @@ def stop_server():
             if retry_count == max_retries:
                 flash(f"Failed to communicate with API after {max_retries} attempts: {str(e)}", "error")
             else:
-                flash(f"Failed to communicate with API. Retrying in {retry_delay} seconds... (Attempt {retry_count}/{max_retries})", "error")
+                flash(
+                    f"Failed to communicate with API. Retrying in {retry_delay} seconds... (Attempt {retry_count}/{max_retries})",
+                    "error")
                 time.sleep(retry_delay)
                 retry_delay *= 2  # Exponential backoff for retry delay
 
@@ -381,11 +385,28 @@ def delete_server():
             if retry_count == max_retries:
                 flash(f"Failed to communicate with API after {max_retries} attempts: {str(e)}", "error")
             else:
-                flash(f"Failed to communicate with API. Retrying in {retry_delay} seconds... (Attempt {retry_count}/{max_retries})", "error")
+                flash(
+                    f"Failed to communicate with API. Retrying in {retry_delay} seconds... (Attempt {retry_count}/{max_retries})",
+                    "error")
                 time.sleep(retry_delay)
                 retry_delay *= 2  # Exponential backoff for retry delay
 
     return redirect(url_for('dashboard'))
+
+
+@app.route('/upgrade_tier', methods=['GET', 'POST'])
+@login_required
+def upgrade_tier():
+    if request.method == 'POST':
+        new_tier = request.form['tier']
+        user = Users.query.filter_by(user_id=current_user.user_id).first()
+        if user:
+            user.tier = new_tier
+            db.session.commit()
+            flash('Tier upgraded successfully!', 'success')
+            return redirect(url_for('dashboard'))
+
+    return render_template('upgrade_tier.html')
 
 
 @app.route('/submit_servers', methods=['POST'])
