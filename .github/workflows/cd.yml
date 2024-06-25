@@ -7,7 +7,7 @@ on:
       - completed
 jobs:
   build:
-    runs-on: ip-10-0-26-184
+    runs-on: webserver1
     steps:
     - name: Log in to Dockerhub
       env: 
