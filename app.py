@@ -220,55 +220,65 @@ def connect():
 @app.route('/create_server', methods=['POST'])
 @login_required
 def create_server():
-    # Extract form data
-    server_name = request.form['serverName']
-    tier = request.form['tiers']
-    level_seed = request.form['level_seed']
-    gamemode = request.form['gamemode']
-    motd = request.form['motd']
-    pvp = request.form['pvp']
-    difficulty = request.form['difficulty']
-    max_players = request.form['max_players']
-    online_mode = request.form['online_mode']
-    view_distance = request.form['view_distance']
-    hardcore = request.form['hardcore']
+    try:
+        # Extract form data (adjust according to your form fields)
+        server_name = request.form['serverName']
+        tier = request.form['tiers']
+        level_seed = request.form.get('level_seed', '')
+        gamemode = request.form.get('gamemode', 'survival')
+        motd = request.form.get('motd', 'A Minecraft Server')
+        pvp = request.form.get('pvp', 'true')
+        difficulty = request.form.get('difficulty', 'easy')
+        max_players = request.form.get('max_players', '20')
+        online_mode = request.form.get('online_mode', 'true')
+        view_distance = request.form.get('view_distance', '10')
+        hardcore = request.form.get('hardcore', 'false')
 
-    # Save server name and tier to the database
-    user = Users.query.filter_by(user_id=current_user.user_id).first()
-    if user:
-        user.server_name = server_name
-        user.tier = tier
-        db.session.commit()
+        # Save server name and tier to the database (optional)
+        user = Users.query.filter_by(user_id=current_user.user_id).first()
+        if user:
+            user.server_name = server_name
+            user.tier = tier
+            db.session.commit()
 
-    # Prepare data to be sent to the external service
-    server_data = {
-        "user_id": str(current_user.user_id),  # Ensure user_id is a string
-        "tier": tier,
-        "server_settings": {
-            "level_seed": level_seed,
-            "gamemode": gamemode,
-            "motd": motd,
-            "pvp": pvp,
-            "difficulty": difficulty,
-            "max_players": max_players,
-            "online_mode": online_mode,
-            "view_distance": view_distance,
-            "hardcore": hardcore
+        # Prepare data to be sent to the external service
+        server_data = {
+            "user_id": "135790",  # Hardcoded user_id as per your requirement
+            "tier": tier,
+            "server_settings": {
+                "level_seed": level_seed,
+                "gamemode": gamemode,
+                "motd": motd,
+                "pvp": pvp,
+                "difficulty": difficulty,
+                "max_players": max_players,
+                "online_mode": online_mode,
+                "view_distance": view_distance,
+                "hardcore": hardcore
+            }
         }
-    }
 
-    # Send the data to the external service
-    response = requests.post('https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/prod/create', json=server_data)
+        # Send the data to the external service
+        response = requests.post('https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/prod/create',
+                                 json=server_data)
 
-    # Process the response from the external service (if any)
-    if response.status_code == 200:
-        flash('Server created successfully!', 'success')
-    else:
-        flash('Failed to create server. Please try again later.', 'error')
+        # Check the response from the external service
+        if response.status_code == 200:
+            flash('Server created successfully!', 'success')
+        else:
+            flash('Failed to create server. Please try again later.', 'error')
+            print(f"API response: {response.text}")
 
-    # Redirect to dashboard
+    except requests.RequestException as e:
+        flash(f"An error occurred with the request: {str(e)}", 'error')
+        print(f"Request Exception: {str(e)}")
+
+    except Exception as e:
+        flash(f"An unexpected error occurred: {str(e)}", 'error')
+        print(f"Exception: {str(e)}")
+
+    # Redirect to dashboard or any other appropriate page
     return redirect(url_for('dashboard'))
-
 
 
 @app.route('/start_server', methods=['GET'])
@@ -421,22 +431,12 @@ def upgrade_tier():
         new_tier = request.form['tier']
         user = Users.query.filter_by(user_id=current_user.user_id).first()
         if user:
-            # Send the request to the API
-            api_response = requests.post(
-                'https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/prod/upgrade',
-                json={'user_id': user.user_id, 'tier': new_tier}
-            )
-
-            # Check the response from the API
-            if api_response.status_code == 200 and api_response.json().get('status') == 'success':
-                user.tier = new_tier
-                db.session.commit()  # Only commit if the API call was successful
-                flash('Tier upgraded successfully!', 'success')
-            else:
-                flash('Failed to upgrade tier. Please try again later.', 'error')
-
+            user.tier = new_tier
+            db.session.commit()
+            flash('Successfully changed tier!', 'success')
             return redirect(url_for('dashboard'))
 
+    flash('Select a tier to upgrade.', 'info')
     return render_template('upgrade_tier.html')
 
 
