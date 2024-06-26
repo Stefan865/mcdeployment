@@ -13,6 +13,7 @@ from forms import TicketForm
 import requests
 import socket
 import time
+import os
 
 app = Flask(__name__)
 
@@ -26,6 +27,8 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+API_BASE_URL = "https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/prod"
 
 
 @login_manager.user_loader
@@ -137,6 +140,28 @@ def logout():
     return redirect(url_for('home'))
 
 
+@app.route('/delete_server', methods=['POST'])
+@login_required
+def delete_server():
+    try:
+        user = Users.query.filter_by(user_id=current_user.user_id).first()
+        if user and user.server_name:
+            server_name = user.server_name
+
+            # Adjusting to use a query parameter for POST requests
+            response = requests.post(f"{API_BASE_URL}/delete?user_id={user.user_id}")
+            if response.status_code == 200:
+                flash('Server deleted successfully!', 'success')
+            else:
+                flash('Failed to delete server.', 'danger')
+        else:
+            flash('User or server information not found.', 'danger')
+        return redirect(url_for('dashboard'))
+    except Exception as e:
+        flash(f"An error occurred: {str(e)}", 'danger')
+        return redirect(url_for('dashboard'))
+
+
 @app.route('/server_settings', methods=['GET', 'POST'])
 @login_required
 def server_settings():
@@ -187,6 +212,77 @@ def login():
     return render_template('login.html', form=form)
 
 
+@app.route('/upgrade_tier', methods=['POST'])
+@login_required
+def upgrade_tier():
+    try:
+        new_tier = request.form['tier']
+        user = Users.query.filter_by(user_id=current_user.user_id).first()
+        if user:
+            user.tier = new_tier
+            db.session.commit()
+
+            # Send parameters in the body of the POST request
+            response = requests.post(
+                f"{API_BASE_URL}/upgrade",
+                json={'user_id': user.user_id, 'tier': new_tier}
+            )
+
+            if response.status_code == 200:
+                flash('Tier upgraded successfully!', 'success')
+            else:
+                flash('Failed to upgrade tier through API.', 'danger')
+        else:
+            flash('User not found.', 'danger')
+        return redirect(url_for('dashboard'))
+    except Exception as e:
+        flash(f"An error occurred: {str(e)}", 'danger')
+        return redirect(url_for('dashboard'))
+
+
+@app.route('/start_server', methods=['GET'])
+@login_required
+def start_server():
+    try:
+        user = Users.query.filter_by(user_id=current_user.user_id).first()
+        if user and user.server_name:
+            # Correctly passing user_id as a query parameter
+            response = requests.get(f"{API_BASE_URL}/start?user_id={user.user_id}")
+            if response.status_code == 200:
+                flash('Server started successfully!', 'success')
+            else:
+                flash('Failed to start server.', 'danger')
+        else:
+            flash('User or server information not found.', 'danger')
+        return redirect(url_for('dashboard'))
+    except Exception as e:
+        flash(f"An error occurred: {str(e)}", 'danger')
+        return redirect(url_for('dashboard'))
+
+
+@app.route('/stop_server', methods=['POST'])
+@login_required
+def stop_server():
+    try:
+        user = Users.query.filter_by(user_id=current_user.user_id).first()
+        if user and user.server_name:
+            server_name = user.server_name
+
+            # Adjusting to use a query parameter for POST requests
+            # Note: While this is unconventional for POST requests, it follows the corrected approach
+            response = requests.post(f"{API_BASE_URL}/stop?user_id={user.user_id}")
+            if response.status_code == 200:
+                flash('Server stopped successfully!', 'success')
+            else:
+                flash('Failed to stop server.', 'danger')
+        else:
+            flash('User or server information not found.', 'danger')
+        return redirect(url_for('dashboard'))
+    except Exception as e:
+        flash(f"An error occurred: {str(e)}", 'danger')
+        return redirect(url_for('dashboard'))
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
@@ -206,8 +302,8 @@ def connect():
     message = ""
     if request.method == 'POST':
         command = request.form['command']
-        server_address = ('35.159.107.238', 25575)
-        password = 'rconpassword123'
+        server_address = (os.getenv('RCON_HOST'), int(os.getenv('RCON_PORT')))
+        password = os.getenv('RCON_PASSWORD')
         try:
             with MCRcon(server_address, password) as rcon:
                 response = rcon.execute(command)
@@ -221,7 +317,7 @@ def connect():
 @login_required
 def create_server():
     try:
-        # Extract form data (adjust according to your form fields)
+        # Extract form data
         server_name = request.form['serverName']
         tier = request.form['tiers']
         level_seed = request.form.get('level_seed', '')
@@ -234,16 +330,16 @@ def create_server():
         view_distance = request.form.get('view_distance', '10')
         hardcore = request.form.get('hardcore', 'false')
 
-        # Save server name and tier to the database (optional)
+        # Update user's server_name and tier in the database
         user = Users.query.filter_by(user_id=current_user.user_id).first()
         if user:
             user.server_name = server_name
             user.tier = tier
             db.session.commit()
 
-        # Prepare data to be sent to the external service
+        # Construct JSON payload for the API request
         server_data = {
-            "user_id": "135790",  # Hardcoded user_id as per your requirement
+            "user_id": str(current_user.user_id),  # Ensure user_id is a string
             "tier": tier,
             "server_settings": {
                 "level_seed": level_seed,
@@ -258,199 +354,21 @@ def create_server():
             }
         }
 
-        # Send the data to the external service
-        response = requests.post('https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/prod/create',
-                                 json=server_data)
+        # Send POST request to the API endpoint
+        response = requests.post(f"{API_BASE_URL}/create", json=server_data)
 
-        # Check the response from the external service
+        # Check response status and handle accordingly
         if response.status_code == 200:
-            flash('Server created successfully!', 'success')
+            flash("Server created successfully!", 'success')
         else:
-            flash('Failed to create server. Please try again later.', 'error')
-            print(f"API response: {response.text}")
+            flash("Failed to create server. Please try again.", 'danger')
 
-    except requests.RequestException as e:
-        flash(f"An error occurred with the request: {str(e)}", 'error')
-        print(f"Request Exception: {str(e)}")
+        return redirect(url_for('dashboard'))
 
     except Exception as e:
-        flash(f"An unexpected error occurred: {str(e)}", 'error')
-        print(f"Exception: {str(e)}")
-
-    # Redirect to dashboard or any other appropriate page
-    return redirect(url_for('dashboard'))
+        flash(f"An error occurred: {str(e)}", 'danger')
+        return redirect(url_for('create_server'))
 
 
-@app.route('/start_server', methods=['GET'])
-@login_required
-def start_server():
-    user_id = 135790  # Replace with your actual user_id
-    api_gateway_url = "https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/prod/start"
-    params = {'user_id': user_id}
-
-    max_retries = 5
-    retry_delay = 10  # Initial delay before first retry in seconds
-    retry_count = 0
-
-    while retry_count < max_retries:
-        try:
-            # Send user_id as query parameter to the API gateway with extended timeout
-            response = requests.get(api_gateway_url, params=params, timeout=30)
-            response.raise_for_status()
-
-            # Assuming the API Gateway returns a JSON response with the domain
-            response_data = response.json()
-            domain = response_data.get('access_domain')
-
-            if not domain:
-                flash("Failed to retrieve domain from API response.", "error")
-                return redirect(url_for('dashboard'))
-
-            # Function to ping server and check if it's running
-            def check_server_status(domain, port):
-                try:
-                    with socket.create_connection((domain, port), timeout=10) as conn:
-                        return True
-                except (socket.timeout, socket.error) as e:
-                    return False
-
-            # Polling mechanism to check server status
-            max_attempts = 24  # 24 attempts * 5 seconds = 120 seconds (2 minutes)
-            for attempt in range(max_attempts):
-                if check_server_status(domain, 25575):
-                    flash(f"Server is running. Access domain: {domain}", "success")
-                    return redirect(url_for('dashboard'))
-                else:
-                    time.sleep(5)  # Wait for 5 seconds before checking again
-
-            flash("Server failed to start or timed out after 2 minutes.", "error")
-            return redirect(url_for('dashboard'))
-
-        except requests.RequestException as e:
-            retry_count += 1
-            if retry_count == max_retries:
-                flash(f"Failed to communicate with API after {max_retries} attempts: {str(e)}", "error")
-            else:
-                flash(
-                    f"Failed to communicate with API. Retrying in {retry_delay} seconds... (Attempt {retry_count}/{max_retries})",
-                    "error")
-                time.sleep(retry_delay)
-                retry_delay *= 2  # Exponential backoff for retry delay
-
-    return redirect(url_for('dashboard'))
-
-
-def ping_server(domain, port):
-    try:
-        with socket.create_connection((domain, port), timeout=10):
-            return True
-    except (socket.timeout, socket.error):
-        return False
-
-
-@app.route('/stop_server', methods=['POST'])
-@login_required
-def stop_server():
-    user_id = 135790  # Replace with your actual user_id
-    api_gateway_url = "https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/prod/stop"
-    params = {'user_id': user_id}
-
-    max_retries = 5
-    retry_delay = 10  # Initial delay before first retry in seconds
-    retry_count = 0
-
-    while retry_count < max_retries:
-        try:
-            # Send user_id as query parameter to the API gateway with extended timeout
-            response = requests.post(api_gateway_url, params=params, timeout=30)
-            response.raise_for_status()
-
-            flash("Server stopped successfully.", "success")
-            return redirect(url_for('dashboard'))
-
-        except requests.RequestException as e:
-            retry_count += 1
-            if retry_count == max_retries:
-                flash(f"Failed to communicate with API after {max_retries} attempts: {str(e)}", "error")
-            else:
-                flash(
-                    f"Failed to communicate with API. Retrying in {retry_delay} seconds... (Attempt {retry_count}/{max_retries})",
-                    "error")
-                time.sleep(retry_delay)
-                retry_delay *= 2  # Exponential backoff for retry delay
-
-    return redirect(url_for('dashboard'))
-
-
-@app.route('/delete_server', methods=['POST'])
-@login_required
-def delete_server():
-    user_id = 135790
-    api_gateway_url = "https://429lybrh7e.execute-api.eu-central-1.amazonaws.com/prod/delete"
-    params = {'user_id': user_id}
-
-    max_retries = 5
-    retry_delay = 10  # Initial delay before first retry in seconds
-    retry_count = 0
-
-    while retry_count < max_retries:
-        try:
-            # Send user_id as query parameter to the API gateway with extended timeout
-            response = requests.post(api_gateway_url, params=params, timeout=30)
-            response.raise_for_status()
-
-            # Assuming the API Gateway returns a JSON response with success message
-            response_data = response.json()
-            success = response_data.get('success')
-
-            if success:
-                flash("Server deletion initiated successfully.", "success")
-            else:
-                flash("Failed to delete server. Please try again later.", "error")
-
-            return redirect(url_for('dashboard'))
-
-        except requests.RequestException as e:
-            retry_count += 1
-            if retry_count == max_retries:
-                flash(f"Failed to communicate with API after {max_retries} attempts: {str(e)}", "error")
-            else:
-                flash(
-                    f"Failed to communicate with API. Retrying in {retry_delay} seconds... (Attempt {retry_count}/{max_retries})",
-                    "error")
-                time.sleep(retry_delay)
-                retry_delay *= 2  # Exponential backoff for retry delay
-
-    return redirect(url_for('dashboard'))
-
-
-@app.route('/upgrade_tier', methods=['GET', 'POST'])
-@login_required
-def upgrade_tier():
-    if request.method == 'POST':
-        new_tier = request.form['tier']
-        user = Users.query.filter_by(user_id=current_user.user_id).first()
-        if user:
-            user.tier = new_tier
-            db.session.commit()
-            flash('Successfully changed tier!', 'success')
-            return redirect(url_for('dashboard'))
-
-    flash('Select a tier to upgrade.', 'info')
-    return render_template('upgrade_tier.html')
-
-
-@app.route('/submit_servers', methods=['POST'])
-@login_required
-def submit_servers():
-    selected_servers = request.form.getlist('server')
-    user = Users.query.filter_by(user_id=current_user.user_id).first()
-    if user:
-        user.server_name = ','.join(selected_servers)
-        db.session.commit()
-        flash('Servers updated successfully!')
-    return redirect(url_for('dashboard'))
-
-
-if __name__ == '__main__':
-    app.run(debug=True, port=80)
+if __name__ == "__main__":
+    app.run(debug=True)
